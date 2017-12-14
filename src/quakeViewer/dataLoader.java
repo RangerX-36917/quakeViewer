@@ -1,7 +1,14 @@
+package quakeViewer;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.sql.*;
+import java.util.Properties;
 
 public class dataLoader {
     public ArrayList<earthQuake> quakes = new ArrayList<>();
@@ -14,35 +21,61 @@ public class dataLoader {
     }
 
     public dataLoader () {
-        long startTime = System.currentTimeMillis();
         loadData();
-        long endTime = System.currentTimeMillis();
-        Collections.sort(quakes, new magnitudeComparator());
         //printElement(quakes);
-
-        System.out.println(endTime - startTime + "ms");
-        System.out.println(quakes.size());
+        //System.out.println(quakes.size());
     }
     private void loadData() {
-        String word;
-        int count = 0;
-
-        try {
-            Tokenizer tok = new Tokenizer("earthquakes.csv");
-            for (int i = 0; i < 7; i++) {
-                word = tok.nextToken();
-                System.out.println(word);
-            }
-
-            while ((word = tok.nextToken()) != null) {
-                earthQuake e = new earthQuake(word, tok.nextToken(), tok.nextToken(), tok.nextToken(), tok.nextToken(), tok.nextToken(), tok.nextToken());
-                count++;
-                quakes.add(e);
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        //establish jdbc connection
+        Connection connection = null;
+        ResultSet resultSet =null;
+        Statement statement = null;
+        //load path to data source from .cnf file, if not, use default setting
+        Properties defProp = new Properties();
+        defProp.put("path","");
+        Properties dbProp = new Properties(defProp);
+        String path = System.getProperty("user.dir");
+        try(BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"))){
+            dbProp.load(conf);
+        }catch (IOException e) {
+            System.err.println("Using default path for data source");
         }
-
+        //load data from sqlite database
+        try{
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
+            statement = connection.createStatement();
+            String q1 = "SELECT id, UTC_date, latitude, longitude, depth, magnitude, region, area_id FROM quakes";
+            resultSet = statement.executeQuery(q1);
+            resultSet.next();
+            while(resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String date = resultSet.getString("UTC_date");
+                float latitude = resultSet.getFloat("latitude");
+                float longitude = resultSet.getFloat("longitude");
+                int depth = resultSet.getInt("depth");
+                float magnitude = resultSet.getFloat("magnitude");
+                String region = resultSet.getString("region");
+                int areaID = resultSet.getInt("area_id");
+                //store data into arrayList
+                earthQuake ek = new earthQuake(id,date,latitude,longitude,depth,magnitude,region,areaID);
+                quakes.add(ek);
+            }
+        } catch (ClassNotFoundException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException sqlE) {
+            System.out.println(sqlE);
+            sqlE.printStackTrace();
+        } finally {
+            try{
+                resultSet.close();
+                statement.close();
+                connection.close();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
     static class idComparator implements Comparator {
         public int compare(Object o1, Object o2) {
@@ -58,7 +91,7 @@ public class dataLoader {
             return new Float(e1.getLatitude()).compareTo(new Float(e2.getLatitude()));
         }
     }
-    static class langitudeComparator implements Comparator {
+    static class longitudeComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             earthQuake e1 = (earthQuake) o1;
             earthQuake e2 = (earthQuake) o2;

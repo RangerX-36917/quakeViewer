@@ -1,18 +1,19 @@
+package quakeViewer;
+
 public class earthQuake implements Comparable{
-    private int id;
+    private int id, areaID;
     private float latitude, longitude, depth, magnitude;
     private String UTC_date, region;
 
-    public earthQuake(String id, String date, String latitude, String langitude, String depth, String magnitude, String region) {
-        String id1 = id.substring(2,id.length());
-        this.id = Integer.valueOf(id1).intValue();
-        String date1 = date.substring(1, date.length() - 1);
-        this.UTC_date = date1;
-        this.longitude = Float.valueOf(langitude).floatValue();
-        this.latitude = Float.valueOf(latitude).floatValue();
-        this.depth = Float.valueOf(depth).floatValue();
-        this.magnitude = Float.valueOf(magnitude).floatValue();
-        this.region = region .substring(1, region.length()-1);
+    public earthQuake(int id, String date, float latitude, float longitude, int depth, float magnitude, String region, int areaID) {
+        this.id = id;
+        this.UTC_date = date;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.depth = depth;
+        this.magnitude = magnitude;
+        this.region = region;
+        this.areaID = areaID;
     }
     public String toString() {
         return id + " " + UTC_date +" "+ latitude+" " + longitude +" " + depth+ " " + magnitude+" " + region;
