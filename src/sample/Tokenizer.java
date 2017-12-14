@@ -1,3 +1,5 @@
+package sample;
+
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -1,3 +1,5 @@
+package sample;
+
 public class earthQuake implements Comparable{
     private int id;
     private float latitude, longitude, depth, magnitude;
