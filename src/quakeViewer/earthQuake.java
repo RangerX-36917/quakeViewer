@@ -1,6 +1,6 @@
 package quakeViewer;
 
-public class earthQuake implements Comparable{
+public class earthQuake implements Comparable {
     private int id, areaID;
     private float latitude, longitude, depth, magnitude;
     private String UTC_date, region;
@@ -15,31 +15,40 @@ public class earthQuake implements Comparable{
         this.region = region;
         this.areaID = areaID;
     }
+
     public String toString() {
-        return id + " " + UTC_date +" "+ latitude+" " + longitude +" " + depth+ " " + magnitude+" " + region;
+        return id + " " + UTC_date + " " + latitude + " " + longitude + " " + depth + " " + magnitude + " " + region;
     }
-    public int compareTo(Object o){
+
+    public int compareTo(Object o) {
         return 1;
     }
+
     public int getId() {
         return id;
     }
+
     public float getLatitude() {
         return latitude;
     }
+
     public float getLongitude() {
         return longitude;
     }
+
     public float getDepth() {
         return depth;
     }
+
     public float getMagnitude() {
         return magnitude;
     }
+
     public String getUTC_date() {
         return UTC_date;
     }
-    public String getRegion(){
+
+    public String getRegion() {
         return region;
     }
 
