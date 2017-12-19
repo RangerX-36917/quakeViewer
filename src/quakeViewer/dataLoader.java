@@ -36,12 +36,14 @@ public class dataLoader {
         } catch (IOException e) {
             System.err.println("Using default path for data source");
         }
+        double mag = 0;
+        String Region = "", fromDate = "", toDate = "";
         //load data from sqlite database
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
             statement = connection.createStatement();
-            String q1 = sql(0,"","","");
+            String q1 = sql(mag, Region, fromDate,toDate);
             resultSet = statement.executeQuery(q1);
             resultSet.next();
             while (resultSet.next()) {
