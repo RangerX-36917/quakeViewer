@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 
 public class dataLoader {
-    public ArrayList<earthQuake> quakes = new ArrayList<>();
+    private ArrayList<earthQuake> quakes = new ArrayList<>();
 
     public dataLoader() {
         loadData();
@@ -19,9 +16,8 @@ public class dataLoader {
     }
 
     public void printElement() {
-        Iterator iter = quakes.iterator();
-        while (iter.hasNext()) {
-            System.out.println(iter.next().toString());
+        for (Object quake : quakes) {
+            System.out.println(quake.toString());
         }
     }
 
@@ -45,7 +41,7 @@ public class dataLoader {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
             statement = connection.createStatement();
-            String q1 = "SELECT id, UTC_date, latitude, longitude, depth, magnitude, region, area_id FROM quakes";
+            String q1 = sql(0,"","","");
             resultSet = statement.executeQuery(q1);
             resultSet.next();
             while (resultSet.next()) {
@@ -59,6 +55,7 @@ public class dataLoader {
                 int areaID = resultSet.getInt("area_id");
                 //store data into arrayList
                 earthQuake ek = new earthQuake(id, date, latitude, longitude, depth, magnitude, region, areaID);
+                //System.out.println(ek.toString());
                 quakes.add(ek);
             }
         } catch (ClassNotFoundException e) {
@@ -69,15 +66,45 @@ public class dataLoader {
             sqlE.printStackTrace();
         } finally {
             try {
-                resultSet.close();
-                statement.close();
-                connection.close();
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
     }
-
+    private String sql(double mag, String Region, String fromDate, String toDate) {
+        String q1 = "SELECT * FROM quakes WHERE 1=1 ";
+        q1 += queryRegion(Region);
+        q1 += queryMag(mag);
+        q1 += queryDate(fromDate, toDate);
+        return q1;
+    }
+    private String queryMag(double mag) {
+        if(mag > 0) {
+            String s = "AND (magnitude >= " + mag + " ) ";
+            return s;
+        }else return "";
+    }
+    private String queryRegion(String Region) {
+        if(!Objects.equals(Region, "")) {
+            String s = "AND (region = '" + Region + "' ) ";
+            return s;
+        } else return "";
+    }
+    private String queryDate(String from, String to) {
+        if(!Objects.equals(from, "") || !Objects.equals(to, "")) {
+            String s = "AND (UTC_date BETWEEN '" + from + "' AND '" + to + "' ) ";
+            return s;
+        } else return "";
+    }
     static class idComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             earthQuake e1 = (earthQuake) o1;
