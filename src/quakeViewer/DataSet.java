@@ -17,7 +17,12 @@ public class DataSet {
         //printElement(quakes);
         //System.out.println(quakes.size());
     }
-
+    public TreeSet<String> getRegions() {
+        return regions;
+    }
+    public ArrayList<earthQuake> getQuakes() {
+        return quakes;
+    }
     public void printElement() {
         for (Object quake : quakes) {
             System.out.println(quake.toString());
