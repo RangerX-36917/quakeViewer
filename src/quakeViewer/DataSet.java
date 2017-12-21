@@ -12,8 +12,8 @@ public class DataSet {
     private Statement statement = null;
     private Connection connection = null;
 
-    public DataSet() {
-        loadData();
+    public DataSet(String Region, String fromDate, String toDate, double mag) {
+        loadData(Region, fromDate, toDate, mag);
         //printElement(quakes);
         //System.out.println(quakes.size());
     }
@@ -59,13 +59,12 @@ public class DataSet {
             System.out.println(e.getMessage());
         }
     }
-    private void loadData() {
+    private void loadData(String Region, String fromDate, String toDate, double mag) {
         //establish jdbc connection
 
         ResultSet resultSet = null;
 
-        double mag = 0;
-        String Region = "", fromDate = "", toDate = "";
+
         //load data from sqlite database
         try {
             setConnection();
