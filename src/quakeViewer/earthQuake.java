@@ -1,6 +1,6 @@
 package quakeViewer;
 
-public class earthQuake implements Comparable {
+public class earthQuake {
     private int id, areaID;
     private float latitude, longitude, depth, magnitude;
     private String UTC_date, region;
