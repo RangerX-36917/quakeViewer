@@ -86,7 +86,7 @@
         </HBox>
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
             <children>
-                <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#showTable" text="Search" />
+                <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#search" text="Search" />
             </children>
         </HBox>
         <TabPane prefHeight="800.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE">

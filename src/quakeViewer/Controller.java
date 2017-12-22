@@ -48,15 +48,13 @@ public class Controller implements Initializable{
         //showTable();
     }
     @FXML
-    private void showTable() {
+    private void search() {
+        //acquire data set based on conditions
         quakes.clear();
         //regions.clear();
         double mag = magSlider.getValue();
         String region = regionChoice.getValue();
         if(region == null) region = "";
-        //System.out.println("region:" +region);
-        //region = "CENTRAL CALIFORNIA";
-
         LocalDate from = datePicker1.getValue();
         LocalDate to = datePicker2.getValue();
         String fromDate = "";
@@ -68,13 +66,30 @@ public class Controller implements Initializable{
             fromDate = dateFormatter.format(from);
         if(to != null)
             toDate = dateFormatter.format(to);
-
-        System.out.println("from: " + fromDate);
-        System.out.println("to: " + toDate);
         DataSet ds  = new DataSet(region,fromDate,toDate,mag);
+
+        showTable(ds);
+        showMercratorMap(ds);
+        showEckertIVMap(ds);
+        showMagChart(ds);
+        showDateChart(ds);
+    }
+    private void showTable(DataSet ds) {
+
         quakes.addAll(ds.getQuakes());
         dataTable.setItems(quakes);
-        //regions.addAll(ds.getRegions());
+    }
+    private void showMercratorMap(DataSet ds) {
+
+    }
+    private void showEckertIVMap(DataSet ds) {
+
+    }
+    private void showMagChart(DataSet ds) {
+
+    }
+    private void showDateChart(DataSet ds) {
+
     }
     @FXML
     private void reset() {
