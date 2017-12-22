@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 public class Controller implements Initializable{
     @FXML private TableView<earthQuake> dataTable;
@@ -28,14 +29,16 @@ public class Controller implements Initializable{
 
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
+    //private TreeSet<String> allRegion;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initilizeTable();
-        dataTable.setItems(quakes);
+        initializeTable();
+        DataSet ds1 = new DataSet("","","",0);
+        regions.addAll(ds1.getRegions());
         regionChoice.setItems(regions);
     }
-    private void initilizeTable() {
+    private void initializeTable() {
         ColID.setCellValueFactory(new PropertyValueFactory<>("id"));
         ColMag.setCellValueFactory(new PropertyValueFactory<>("magnitude"));
         ColLongitude.setCellValueFactory(new PropertyValueFactory<>("longitude"));
@@ -43,10 +46,22 @@ public class Controller implements Initializable{
         ColDepth.setCellValueFactory(new PropertyValueFactory<>("depth"));
         ColDate.setCellValueFactory(new PropertyValueFactory<>("UTC_date"));
         ColRegion.setCellValueFactory(new PropertyValueFactory<>("region"));
+        showTable();
+    }
+    @FXML
+    private void showTable() {
         quakes.clear();
-        DataSet ds  = new DataSet("","","",2.2);
+        //regions.clear();
+        double mag = magSlider.getValue();
+        String region = regionChoice.getValue();
+        //region = "CENTRAL CALIFORNIA";
+        DataSet ds  = new DataSet(region,"","",mag);
         quakes.addAll(ds.getQuakes());
-        regions.addAll(ds.getRegions());
-
+        dataTable.setItems(quakes);
+        //regions.addAll(ds.getRegions());
+    }
+    @FXML
+    private void reset() {
+        magSlider.setValue(0);
     }
 }
