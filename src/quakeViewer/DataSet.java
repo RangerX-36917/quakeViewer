@@ -121,7 +121,7 @@ public class DataSet {
     }
     private String queryDate(String from, String to) {
         if(!Objects.equals(from, "") || !Objects.equals(to, "")) {
-            String s = "AND (UTC_date BETWEEN '" +" 00:00:00 " + from + "' AND '" + " 00:00:00 " + to + "' ) ";
+            String s = "AND (UTC_date BETWEEN '" +from + " 00:00:00.1 " + "' AND '" + to + " 00:00:01 " + "' ) ";
             return s;
         } else return "";
     }

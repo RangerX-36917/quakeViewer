@@ -1,21 +1,18 @@
 package quakeViewer;
-
+import  java.time.LocalDate;
+import java.time.format.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
 public class Controller implements Initializable{
+
     @FXML private TableView<earthQuake> dataTable;
     @FXML private ChoiceBox<String> regionChoice;
     @FXML private TableColumn<earthQuake, String> ColID;
@@ -26,7 +23,9 @@ public class Controller implements Initializable{
     @FXML private TableColumn<earthQuake, String> ColDate;
     @FXML private TableColumn<earthQuake, String> ColRegion;
     @FXML private Slider magSlider;
-
+    @FXML private DatePicker datePicker1;
+    @FXML private DatePicker datePicker2;
+    private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
     //private TreeSet<String> allRegion;
@@ -46,7 +45,7 @@ public class Controller implements Initializable{
         ColDepth.setCellValueFactory(new PropertyValueFactory<>("depth"));
         ColDate.setCellValueFactory(new PropertyValueFactory<>("UTC_date"));
         ColRegion.setCellValueFactory(new PropertyValueFactory<>("region"));
-        showTable();
+        //showTable();
     }
     @FXML
     private void showTable() {
@@ -54,8 +53,25 @@ public class Controller implements Initializable{
         //regions.clear();
         double mag = magSlider.getValue();
         String region = regionChoice.getValue();
+        if(region == null) region = "";
+        //System.out.println("region:" +region);
         //region = "CENTRAL CALIFORNIA";
-        DataSet ds  = new DataSet(region,"","",mag);
+
+        LocalDate from = datePicker1.getValue();
+        LocalDate to = datePicker2.getValue();
+        String fromDate = "";
+        String toDate = "";
+        if(from == null) fromDate = "";
+        if(to == null) toDate = "";
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
+        if(from != null)
+            fromDate = dateFormatter.format(from);
+        if(to != null)
+            toDate = dateFormatter.format(to);
+
+        System.out.println("from: " + fromDate);
+        System.out.println("to: " + toDate);
+        DataSet ds  = new DataSet(region,fromDate,toDate,mag);
         quakes.addAll(ds.getQuakes());
         dataTable.setItems(quakes);
         //regions.addAll(ds.getRegions());
