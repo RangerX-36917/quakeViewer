@@ -18,7 +18,7 @@ public class Main extends Application {
         primaryStage.setTitle("Earth Quake Viewer");
         primaryStage.setScene(new Scene(root, 1200, 900));
         primaryStage.show();
-        DataSet dataSet = new DataSet();
+        //DataSet dataSet = new DataSet();
 
     }
 }
