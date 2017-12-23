@@ -13,7 +13,15 @@ public class DataSet {
     private Connection connection = null;
 
     public DataSet(String Region, String fromDate, String toDate, double mag) {
+        setConnection();
         loadData(Region, fromDate, toDate, mag);
+        DataCollector dataCollector = new DataCollector();
+        try {
+            insertList(dataCollector.getQuakes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        closeConnection();
         //printElement(quakes);
         //System.out.println(quakes.size());
     }
@@ -72,7 +80,7 @@ public class DataSet {
 
         //load data from sqlite database
         try {
-            setConnection();
+
 
             String q1 = sql(mag, Region, fromDate,toDate);
             resultSet = statement.executeQuery(q1);
@@ -96,9 +104,17 @@ public class DataSet {
         } catch (SQLException sqlE) {
             System.out.println(sqlE);
             sqlE.printStackTrace();
-        } finally {
-            closeConnection();
         }
+    }
+    public void insertList(ArrayList<earthQuake> quakes) throws Exception {
+        Statement stmt = connection.createStatement();
+        String insert = "INSERT INTO quakes VALUES (";
+        for(earthQuake e:quakes) {
+                insert += "123456" + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"', 123)";
+                System.out.println("insert:" + insert);
+                stmt.executeUpdate(insert);
+        }
+
     }
     private String sql(double mag, String Region, String fromDate, String toDate) {
         String q1 = "SELECT * FROM quakes WHERE 1=1 ";

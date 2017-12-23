@@ -1,8 +1,8 @@
 package quakeViewer;
 
 public class earthQuake {
-    private int id, areaID;
-    private float latitude, longitude, depth, magnitude;
+    private int id, areaID, depth;
+    private float latitude, longitude, magnitude;
     private String UTC_date, region;
 
     public earthQuake(int id, String date, float latitude, float longitude, int depth, float magnitude, String region, int areaID) {
@@ -36,7 +36,7 @@ public class earthQuake {
         return longitude;
     }
 
-    public float getDepth() {
+    public int getDepth() {
         return depth;
     }
 

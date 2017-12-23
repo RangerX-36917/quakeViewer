@@ -14,10 +14,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         Parent root = FXMLLoader.load(getClass().getResource("quakeViewer.fxml"));
         primaryStage.setTitle("Earth Quake Viewer");
         primaryStage.setScene(new Scene(root, 1200, 900));
         primaryStage.show();
+
+        //DataCollector dataCollector = new DataCollector();
         //DataSet dataSet = new DataSet();
 
     }
