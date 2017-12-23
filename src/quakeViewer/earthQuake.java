@@ -1,5 +1,7 @@
 package quakeViewer;
 
+import java.util.Random;
+
 public class earthQuake {
     private int id, areaID, depth;
     private float latitude, longitude, magnitude;
@@ -14,6 +16,24 @@ public class earthQuake {
         this.magnitude = magnitude;
         this.region = region;
         this.areaID = areaID;
+    }
+    public earthQuake(String id, String time, String latitude, String longitude, String depth, String magnitude, String region, String areaID) {
+        float lat = Float.valueOf(latitude);
+        float log = Float.valueOf(longitude);
+        int dep = Integer.valueOf(depth);
+        float mag = Float.valueOf(magnitude);
+        Random r = new Random();
+        int x = r.nextInt() % 1000;
+        this.id = Integer.valueOf(id);
+        this.UTC_date = time;
+        this.latitude = lat;
+        this.longitude = log;
+        this.depth = dep;
+        this.magnitude = mag;
+        this.region = region;
+        this.areaID = 32;
+
+
     }
 
     public String toString() {
