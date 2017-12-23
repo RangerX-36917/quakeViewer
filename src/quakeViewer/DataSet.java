@@ -108,11 +108,14 @@ public class DataSet {
     }
     public void insertList(ArrayList<earthQuake> quakes) throws Exception {
         Statement stmt = connection.createStatement();
-        String insert = "INSERT INTO quakes VALUES (";
-        for(earthQuake e:quakes) {
-                insert += "123456" + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"', 123)";
-                System.out.println("insert:" + insert);
-                stmt.executeUpdate(insert);
+        String insert;
+        for(int i = 0; i < quakes.size(); i++) {
+            earthQuake e = quakes.get(i);
+            insert = "INSERT INTO quakes VALUES (";
+            int rID = 123 + i;
+            insert += e.getId() + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"',"+ rID+")";
+            //System.out.println("insert:" + insert);
+            stmt.executeUpdate(insert);
         }
 
     }

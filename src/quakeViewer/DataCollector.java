@@ -6,10 +6,7 @@ import org.jsoup.select.Elements;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TreeSet;
+import java.util.*;
 
 public class DataCollector {
     static private int page =  54;
@@ -34,7 +31,7 @@ public class DataCollector {
             /**
              * grab page from URL
              */
-            System.out.println("investigating: " + URL);
+            //System.out.println("investigating: " + URL);
             Document doc = Jsoup.connect(URL).timeout(5000).get();
             String text = doc.toString();
             //System.out.println(text);
@@ -55,7 +52,7 @@ public class DataCollector {
                 try {
                     Date date3 = df.parse(e.getUTC_date());
                     if(date2.getTime() > date3.getTime()) {
-                        System.out.println("stop");
+                        //System.out.println("stop");
                         return 0;
                     }
                 } catch (ParseException e1) {
@@ -104,8 +101,9 @@ public class DataCollector {
         float mag = Float.valueOf(magnitude);
 
         String region = record.get(11).text();
-
-        earthQuake e = new earthQuake(2,time,lat,log,dep,mag,region,32);
+        Random r = new Random();
+        int x = r.nextInt() % 1000;
+        earthQuake e = new earthQuake(x,time,lat,log,dep,mag,region,32);
 
         return e;
     }
