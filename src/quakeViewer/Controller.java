@@ -73,7 +73,9 @@ public class Controller implements Initializable{
         showEckertIVMap(ds);
         showMagChart(ds);
         showDateChart(ds);
+
     }
+
     private void showTable(DataSet ds) {
 
         quakes.addAll(ds.getQuakes());

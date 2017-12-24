@@ -48,7 +48,7 @@ public class DataCollector {
                 Elements tds = trs.get(i).select("td");
                 if (tds.size() != 13) continue;
                 earthQuake e = getEarthQuake(tds);
-                System.out.println(e.toString());
+                //System.out.println(e.toString());
                 try {
                     Date date3 = df.parse(e.getUTC_date());
                     if(date2.getTime() > date3.getTime()) {

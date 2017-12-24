@@ -1,1 +1,3 @@
-path : /Users/chenshijie/Public/onedrive/Code/java/git/quakeViewer/src/earthquakes.sqlite
+source : csv
+csvPath : /Users/chenshijie/Public/onedrive/Code/java/git/quakeViewer/src/earthquakes.csv
+dbPath : /Users/chenshijie/Public/onedrive/Code/java/git/quakeViewer/src/earthquakes.sqlite

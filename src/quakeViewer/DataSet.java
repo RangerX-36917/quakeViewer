@@ -1,6 +1,7 @@
 package quakeViewer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
@@ -13,17 +14,37 @@ public class DataSet {
     private Connection connection = null;
 
     public DataSet(String Region, String fromDate, String toDate, double mag) {
-        setConnection();
-        loadData(Region, fromDate, toDate, mag);
+        Properties defProp = new Properties();
+        defProp.put("db path", "");
+        defProp.put("csv path", "");
+        defProp.put("source","sqlite");
+        Properties dataProp = new Properties(defProp);
+        Properties sysProp = new Properties(defProp);
+        String path = System.getProperty("user.dir");try (BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"))) {
+            sysProp.load(conf);
+        } catch (IOException e) {
+            System.err.println("Using default path for data source");
+        }
+        if(sysProp.getProperty("source").equals("csv")) {
+
+            createCSVDB(path, dataProp);
+        } else {
+            setDBConnection(path, dataProp);
+            //printElement(quakes);
+            //System.out.println(quakes.size());
+        }
+
         DataCollector dataCollector = new DataCollector();
+
         try {
             insertList(dataCollector.getQuakes());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        loadData(Region, fromDate, toDate, mag);
         closeConnection();
-        //printElement(quakes);
-        //System.out.println(quakes.size());
+        File file = new File(path + "/src/tempSqlite.sqlite");
+        file.delete();
     }
     public TreeSet<String> getRegions() {
         return regions;
@@ -36,11 +57,7 @@ public class DataSet {
             System.out.println(quake.toString());
         }
     }
-    private void setConnection() {
-        Properties defProp = new Properties();
-        defProp.put("path", "");
-        Properties dbProp = new Properties(defProp);
-        String path = System.getProperty("user.dir");
+    private void setDBConnection(String path, Properties dbProp){
         try (BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"))) {
             dbProp.load(conf);
         } catch (IOException e) {
@@ -48,7 +65,7 @@ public class DataSet {
         }
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("dbPath"));
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
@@ -57,7 +74,6 @@ public class DataSet {
             System.out.println(sqlE);
             sqlE.printStackTrace();
         }
-
     }
     private void closeConnection() {
         try {
@@ -106,18 +122,95 @@ public class DataSet {
             sqlE.printStackTrace();
         }
     }
-    public void insertList(ArrayList<earthQuake> quakes) throws Exception {
+    public void insertList(ArrayList<earthQuake> _quakes) throws Exception {
+        System.out.println("********insert " + _quakes.size() + " elements *********");
         Statement stmt = connection.createStatement();
         String insert;
-        for(int i = 0; i < quakes.size(); i++) {
-            earthQuake e = quakes.get(i);
+        statement.clearBatch();
+        for(int i = 0; i < _quakes.size(); i++) {
+            earthQuake e = _quakes.get(i);
+            //System.out.println("insert: # " +i+" " + e.toString());
             insert = "INSERT INTO quakes VALUES (";
             int rID = 123 + i;
-            insert += e.getId() + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"',"+ rID+")";
-            //System.out.println("insert:" + insert);
-            stmt.executeUpdate(insert);
+            insert += e.getId() + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"',"+rID+")";
+            stmt.addBatch(insert);
+            if(i % 100 == 0) {
+                try{
+                    System.out.println("execute batch");
+                    stmt.executeBatch();
+                    stmt.clearBatch();
+                } catch (Exception x) {
+
+                }
+            }
+        }
+        try{
+            System.out.println("execute batch");
+            stmt.executeBatch();
+            stmt.clearBatch();
+        } catch (Exception x) {
+
         }
 
+    }
+
+    public void createCSVDB(String path, Properties dbProp){
+        System.out.println("using csv");
+        try {
+            //System.out.println(path);
+            BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"));
+            dbProp.load(conf);
+            //System.out.println(dbProp.getProperty("csvPath"));
+        } catch (IOException e) {
+            System.err.println("Using default path for data source");
+        }
+
+        try {
+
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path + "/src/tempSqlite.sqlite");
+            statement = connection.createStatement();
+            try{
+                statement.executeUpdate(" CREATE TABLE quakes (id int ,UTC_date VARCHAR (30), latitude float , " +
+                        "longitude float ,depth int ,magnitude float ,region varchar(100), area_id int)");
+            }catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            File dataFile = new File(dbProp.getProperty("csvPath"));
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(dataFile));
+                String line;
+                br.readLine();
+                ArrayList<earthQuake> list = new ArrayList<>();
+                int counter = 0;
+                while((line = br.readLine()) != null) {
+                    counter++;
+                    String[] elements = line.split(",");
+                    earthQuake e = new earthQuake(elements[0] , elements[1].substring(1, elements[1].length() - 1) , elements[2],
+                            elements[3] ,elements[4],elements[5], elements[6].substring(1,elements[6].length() - 1),"323");
+
+                    list.add(e);
+
+                }
+                insertList(list);
+
+
+            } catch (Exception e) {
+
+            }
+
+            String filePath = dbProp.getProperty("csv path");
+            //System.out.println(filePath);
+
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException sqlE) {
+            System.out.println(sqlE);
+            sqlE.printStackTrace();
+        }
     }
     private String sql(double mag, String Region, String fromDate, String toDate) {
         String q1 = "SELECT * FROM quakes WHERE 1=1 ";
