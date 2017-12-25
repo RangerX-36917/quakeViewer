@@ -14,32 +14,30 @@ import java.util.*;
 import java.util.Date;
 
 public class DataSet {
-    private ArrayList<earthQuake> quakes = new ArrayList<>();
     private TreeSet<String> regions = new TreeSet<>();
     private Statement statement = null;
     private Connection connection = null;
 
-    static private Calendar calendar = Calendar.getInstance();
-    static private Date date1 = new Date();//current time
-    static private Date date2; //target time
-    static private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    static private ArrayList<earthQuake> newQuakes;
+    private Calendar calendar = Calendar.getInstance();
+    private Date date1 = new Date();//current time
+    private Date date2; //target time
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private ArrayList<earthQuake> newQuakes = new ArrayList<>();
 
-    public DataSet(String Region, String fromDate, String toDate, double mag) {
+    public DataSet() {
+        query("","","",0);
         setConnection();
-        loadData(Region, fromDate, toDate, mag);
-
         String q2 = "SELECT MAX(UTC_date) FROM quakes";
-        ResultSet resultSetMaxDate = null;String maxDate = null;
+        ResultSet resultSetMaxDate = null;
+        String maxDate = null;
         try {
             resultSetMaxDate = statement.executeQuery(q2);
             maxDate = resultSetMaxDate.getString(1);
+            System.out.println("current max date: " + maxDate);
+            onlineUpdate(1,maxDate);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        System.out.println("max date: " + maxDate);
-        connect(1,maxDate);
 
         closeConnection();
         //printElement(quakes);
@@ -48,14 +46,8 @@ public class DataSet {
     public TreeSet<String> getRegions() {
         return regions;
     }
-    public ArrayList<earthQuake> getQuakes() {
-        return quakes;
-    }
-    public void printElement() {
-        for (Object quake : quakes) {
-            System.out.println(quake.toString());
-        }
-    }
+
+
     void setConnection() {
         Properties defProp = new Properties();
         defProp.put("path", "");
@@ -92,9 +84,11 @@ public class DataSet {
             System.out.println(e.getMessage());
         }
     }
-    private void loadData(String Region, String fromDate, String toDate, double mag) {
-        //establish jdbc connection
 
+    public ArrayList<earthQuake> query(String Region, String fromDate, String toDate, double mag) {
+        setConnection();
+        //establish jdbc connection
+        ArrayList<earthQuake> ans = new ArrayList<>();
         ResultSet resultSet = null;
 
 
@@ -104,7 +98,6 @@ public class DataSet {
             String q1 = sql(mag, Region, fromDate,toDate);
             resultSet = statement.executeQuery(q1);
 
-            resultSet.next();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String date = resultSet.getString("UTC_date");
@@ -118,14 +111,16 @@ public class DataSet {
 
                 earthQuake ek = new earthQuake(id, date, latitude, longitude, depth, magnitude, region, areaID);
                 regions.add(region);
-                quakes.add(ek);
+                ans.add(ek);
 
             }
         } catch (SQLException sqlE) {
-            System.out.println(sqlE);
             sqlE.printStackTrace();
         }
+        closeConnection();
+        return ans;
     }
+
     void insertList(ArrayList<earthQuake> quakes) throws Exception {
         Statement stmt = connection.createStatement();
         String insert;
@@ -133,7 +128,7 @@ public class DataSet {
             earthQuake e = quakes.get(i);
             insert = "INSERT INTO quakes VALUES (";
             int rID = 123 + i;
-            insert += e.getId() + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion()+"',"+ rID+")";
+            insert +=  e.getId() + ", '" + e.getUTC_date() + "'," +e.getLatitude() + "," + e.getLongitude() + "," + e.getDepth() + "," +e.getMagnitude() + ",'" + e.getRegion().replace('\'','"')+"',"+ rID+")";
             //System.out.println("insert:" + insert);
             stmt.executeUpdate(insert);
         }
@@ -164,7 +159,8 @@ public class DataSet {
             return s;
         } else return "";
     }
-    public int connect(int pgNum, String maxDate) {
+
+    public int onlineUpdate(int pgNum, String maxDate) {
 
         Date date2 = null;
         try {
@@ -195,8 +191,11 @@ public class DataSet {
 
             for (int i = 1; i < trs.size() - 1; i++) {
                 Elements tds = trs.get(i).select("td");
+                String tr = trs.get(i).attr("id");
+
                 if (tds.size() != 13) continue;
-                earthQuake e = getEarthQuake(tds);
+                //System.out.print("tr: " + tr + " " );
+                earthQuake e = getEarthQuake(tr,tds);
                 //System.out.println(e.toString());
                 try {
                     Date date3 = df.parse(e.getUTC_date());
@@ -224,7 +223,7 @@ public class DataSet {
             */
             //String txt = uls.get(64 ).attr("abs:href");
 
-            quakes.remove(quakes.size() - 1);
+            System.out.println("last: " + newQuakes.get(newQuakes.size() - 1).toString());newQuakes.remove(newQuakes.size() - 1);
             try {
                 insertList(newQuakes);
                 newQuakes.clear();
@@ -232,7 +231,7 @@ public class DataSet {
                 e.printStackTrace();
             }
 
-            if(connect(pgNum + 1, maxDate) == 0) {
+            if(onlineUpdate(pgNum + 1, maxDate) == 0) {
                 return 0;
             }
 
@@ -242,7 +241,7 @@ public class DataSet {
         }
         return 1;
     }
-    private static earthQuake getEarthQuake(Elements record) {
+    private static earthQuake getEarthQuake(String tr, Elements record) {
         /**
          * construct earthQuake object from table data
          */
@@ -269,9 +268,8 @@ public class DataSet {
         float mag = Float.valueOf(magnitude);
 
         String region = record.get(11).text();
-        Random r = new Random();
-        int x = r.nextInt() % 1000;
-        earthQuake e = new earthQuake(x,time,lat,log,dep,mag,region,32);
+
+        earthQuake e = new earthQuake(Integer.valueOf(tr),time,lat,log,dep,mag,region,32);
 
         return e;
     }
