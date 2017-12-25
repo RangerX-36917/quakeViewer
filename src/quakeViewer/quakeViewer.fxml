@@ -111,14 +111,14 @@
                 </Tab>
                 <Tab text="Mercator Map">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <ImageView fitHeight="709.0" fitWidth="1160.0" layoutX="68.0" layoutY="17.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                        <AnchorPane fx:id="mercratorMap" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                                <ImageView fitHeight="709.0" fitWidth="1160.0" layoutX="6.0" layoutY="8.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Mercator.jpg" />
                                     </image>
                                 </ImageView>
-                            </children></AnchorPane>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Eckert IV Map">

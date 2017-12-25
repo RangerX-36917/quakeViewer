@@ -25,7 +25,8 @@ public class DataSet {
      * establish connection to database, fetch new data from the internet and update the database file
      */
     public DataSet() {
-        query("","","",0);
+        query("","","",0); //update region for choiceBox
+        //
         setConnection();
         String q2 = "SELECT MAX(UTC_date) FROM quakes";
         ResultSet resultSetMaxDate = null;
@@ -40,8 +41,6 @@ public class DataSet {
         }
 
         closeConnection();
-        //printElement(quakes);
-        //System.out.println(quakes.size());
     }
 
     /**
