@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
@@ -28,12 +29,13 @@ public class Controller implements Initializable{
     private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
+    private DataSet ds1;
     //private TreeSet<String> allRegion;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeTable();
-        DataSet ds1 = new DataSet("","","",0);
+        ds1 = new DataSet();
         regions.addAll(ds1.getRegions());
         regionChoice.setItems(regions);
     }
@@ -48,15 +50,13 @@ public class Controller implements Initializable{
         //showTable();
     }
     @FXML
-    private void showTable() {
+    private void search() {
+        //acquire data set based on conditions
         quakes.clear();
         //regions.clear();
         double mag = magSlider.getValue();
         String region = regionChoice.getValue();
         if(region == null) region = "";
-        //System.out.println("region:" +region);
-        //region = "CENTRAL CALIFORNIA";
-
         LocalDate from = datePicker1.getValue();
         LocalDate to = datePicker2.getValue();
         String fromDate = "";
@@ -68,13 +68,33 @@ public class Controller implements Initializable{
             fromDate = dateFormatter.format(from);
         if(to != null)
             toDate = dateFormatter.format(to);
+        ArrayList<earthQuake> ans = new ArrayList<>();
+        ans = ds1.query(region,fromDate,toDate,mag);
 
-        System.out.println("from: " + fromDate);
-        System.out.println("to: " + toDate);
-        DataSet ds  = new DataSet(region,fromDate,toDate,mag);
-        quakes.addAll(ds.getQuakes());
+        showTable(ans);
+        showMercratorMap(ans);
+        showEckertIVMap(ans);
+        showMagChart(ans);
+        showDateChart(ans);
+    }
+    private void showTable(ArrayList<earthQuake> data) {
+        for(earthQuake e:data) {
+            System.out.println("result: " + e.toString());
+        }
+        quakes.addAll(data);
         dataTable.setItems(quakes);
-        //regions.addAll(ds.getRegions());
+    }
+    private void showMercratorMap(ArrayList<earthQuake> data) {
+
+    }
+    private void showEckertIVMap(ArrayList<earthQuake> data) {
+
+    }
+    private void showMagChart(ArrayList<earthQuake> data) {
+
+    }
+    private void showDateChart(ArrayList<earthQuake> data) {
+
     }
     @FXML
     private void reset() {
