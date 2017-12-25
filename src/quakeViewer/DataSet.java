@@ -3,7 +3,6 @@ package quakeViewer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,16 +13,17 @@ import java.util.*;
 import java.util.Date;
 
 public class DataSet {
+
     private TreeSet<String> regions = new TreeSet<>();
     private Statement statement = null;
     private Connection connection = null;
-
-    private Calendar calendar = Calendar.getInstance();
-    private Date date1 = new Date();//current time
-    private Date date2; //target time
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private ArrayList<earthQuake> newQuakes = new ArrayList<>();
 
+    /**
+     * constructor
+     * establish connection to database, fetch new data from the internet and update the database file
+     */
     public DataSet() {
         query("","","",0);
         setConnection();
@@ -43,48 +43,23 @@ public class DataSet {
         //printElement(quakes);
         //System.out.println(quakes.size());
     }
+
+    /**
+     * return regions for the choice box
+     * @return
+     */
     public TreeSet<String> getRegions() {
         return regions;
     }
 
-
-    void setConnection() {
-        Properties defProp = new Properties();
-        defProp.put("path", "");
-        Properties dbProp = new Properties(defProp);
-        String path = System.getProperty("user.dir");
-        try (BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"))) {
-            dbProp.load(conf);
-        } catch (IOException e) {
-            System.err.println("Using default path for data source");
-        }
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
-            statement = connection.createStatement();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException sqlE) {
-            System.out.println(sqlE);
-            sqlE.printStackTrace();
-        }
-
-    }
-    void closeConnection() {
-        try {
-
-            if (statement != null) {
-                statement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
+    /**
+     * execute query based on the given conditions
+     * @param Region region
+     * @param fromDate start of date interval
+     * @param toDate end of date interval
+     * @param mag minimum magnitude
+     * @return an ArrayList of earthquakes wanted
+     */
     public ArrayList<earthQuake> query(String Region, String fromDate, String toDate, double mag) {
         setConnection();
         //establish jdbc connection
@@ -121,6 +96,55 @@ public class DataSet {
         return ans;
     }
 
+    /**
+     * set jdbc connection
+     */
+    void setConnection() {
+        Properties defProp = new Properties();
+        defProp.put("path", "");
+        Properties dbProp = new Properties(defProp);
+        String path = System.getProperty("user.dir");
+        try (BufferedReader conf = new BufferedReader(new FileReader(path + "/src/preference.cnf"))) {
+            dbProp.load(conf);
+        } catch (IOException e) {
+            System.err.println("Using default path for data source");
+        }
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbProp.getProperty("path"));
+            statement = connection.createStatement();
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException sqlE) {
+            System.out.println(sqlE);
+            sqlE.printStackTrace();
+        }
+
+    }
+
+    /**
+     * close jdbc connection
+     */
+    void closeConnection() {
+        try {
+
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * insert quake data fetched from the web page into database
+     * @param quakes data fetched
+     * @throws Exception
+     */
     void insertList(ArrayList<earthQuake> quakes) throws Exception {
         Statement stmt = connection.createStatement();
         String insert;
@@ -134,6 +158,15 @@ public class DataSet {
         }
 
     }
+
+    /**
+     * create sql query command based on given parameters
+     * @param mag magnitude
+     * @param Region region
+     * @param fromDate start of date interval
+     * @param toDate end of date interval
+     * @return sql query command
+     */
     private String sql(double mag, String Region, String fromDate, String toDate) {
         String q1 = "SELECT * FROM quakes WHERE 1=1 ";
         q1 += queryRegion(Region);
@@ -160,6 +193,12 @@ public class DataSet {
         } else return "";
     }
 
+    /**
+     * fetch newest online data for the database
+     * @param pgNum the pagenumber that's to be fetched
+     * @param maxDate the maximum data in the database before update
+     * @return 1 if continue, 0 if meets the end (for recursively visit next pages)
+     */
     public int onlineUpdate(int pgNum, String maxDate) {
 
         Date date2 = null;
@@ -241,11 +280,14 @@ public class DataSet {
         }
         return 1;
     }
-    private static earthQuake getEarthQuake(String tr, Elements record) {
-        /**
-         * construct earthQuake object from table data
-         */
 
+    /**
+     * constructor earthQuake object by given tr and record grabbed from the html file
+     * @param tr contains earthQuake id
+     * @param record contains earthQuake attributes
+     * @return an earthQuake object
+     */
+    private static earthQuake getEarthQuake(String tr, Elements record) {
         String data = record.get(3).text();
         String time = data.substring(10, 31);
 
