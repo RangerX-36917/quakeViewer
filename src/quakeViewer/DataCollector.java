@@ -3,6 +3,9 @@ package quakeViewer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.io.IOException;
@@ -10,9 +13,9 @@ import java.util.*;
 
 public class DataCollector {
     static private int page =  54;
-    public DataCollector() {
-        String s = "https://www.emsc-csem.org/Earthquake/";
-        connect(s);
+    public DataCollector(String maxDate) {
+
+        connect(1, maxDate);
     }
     static private Calendar calendar = Calendar.getInstance();
     static private Date date1 = new Date();//current time
@@ -22,17 +25,27 @@ public class DataCollector {
     private ArrayList<earthQuake> quakes = new ArrayList<>();
     private TreeSet<String> regions = new TreeSet<>();
 
-    public int connect(String URL) {
-        calendar.setTime(date1);
-        calendar.add(Calendar.HOUR, -13); //(-8)-5=-13
-        date2 = calendar.getTime();
+    public int connect(int pgNum, String maxDate) {
+
+        Date date2 = null;
+        try {
+            date2 = df.parse(maxDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        String s = "https://www.emsc-csem.org/Earthquake/" ;
+
+        String address = pgNum > 1? (s + "?view=" + pgNum) : s;
+        System.out.println("visiting url:" + address);
 
         try {
             /**
              * grab page from URL
              */
             //System.out.println("investigating: " + URL);
-            Document doc = Jsoup.connect(URL).timeout(5000).get();
+            Document doc = Jsoup.connect(address).timeout(2000).get();
             String text = doc.toString();
             //System.out.println(text);
             /**
@@ -41,32 +54,42 @@ public class DataCollector {
             Elements trs = doc.select("table").select("tr");
             Elements uls = doc.select("a[href]");
 
-            /**
-             * extract data from table on the page
-             */
-            for (int i = 1; i < trs.size(); i++) {
+            for (int i = 1; i < trs.size() - 1; i++) {
                 Elements tds = trs.get(i).select("td");
                 if (tds.size() != 13) continue;
                 earthQuake e = getEarthQuake(tds);
-                System.out.println(e.toString());
+                //System.out.println(e.toString());
                 try {
                     Date date3 = df.parse(e.getUTC_date());
-                    if(date2.getTime() > date3.getTime()) {
-                        //System.out.println("stop");
+                    if(date2.getTime() >= date3.getTime()) {
+                        System.out.println("stop");
                         return 0;
+                    } else {
+                        System.out.println("add: " + e.toString());
+                        quakes.add(e);
+                        regions.add(e.getRegion());
                     }
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }
-                quakes.add(e);
-                regions.add(e.getRegion());
+
 
             }
 
-
+            /*
             int end = uls.size();//> 47? 47:uls.size();
-            String txt = uls.get(54).attr("abs:href");
-            if(connect(txt) == 0) return 0;
+            for(int i = 54; i < 70; i++) {
+                System.out.println("link #" + i + " "+uls.get(i).attr("abs:href"));
+
+            }
+            */
+            //String txt = uls.get(64 ).attr("abs:href");
+
+            quakes.remove(quakes.size() - 1);
+
+            if(connect(pgNum + 1, maxDate) == 0) {
+                return 0;
+            }
 
 
         } catch (IOException e) {
@@ -110,4 +133,5 @@ public class DataCollector {
     public ArrayList<earthQuake> getQuakes() {
         return quakes;
     }
+
 }
