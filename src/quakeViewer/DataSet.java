@@ -15,10 +15,12 @@ import java.util.Date;
 public class DataSet {
 
     private TreeSet<String> regions = new TreeSet<>();
+    private TreeSet<String> newRegions = new TreeSet<>();
     private Statement statement = null;
     private Connection connection = null;
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private ArrayList<earthQuake> newQuakes = new ArrayList<>();
+    private int numNew;
 
     /**
      * constructor
@@ -42,15 +44,38 @@ public class DataSet {
 
         closeConnection();
     }
+    public int update() {
+        numNew = 0;
+        setConnection();
+        String q2 = "SELECT MAX(UTC_date) FROM quakes";
+        ResultSet resultSetMaxDate = null;
+        String maxDate = null;
+        try {
+            resultSetMaxDate = statement.executeQuery(q2);
+            maxDate = resultSetMaxDate.getString(1);
+            System.out.println("current max date: " + maxDate);
+            onlineUpdate(1,maxDate);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("update complete");
+        closeConnection();
+        return numNew;
+    }
 
     /**
      * return regions for the choice box
-     * @return
+     * @return regions
      */
     public TreeSet<String> getRegions() {
         return regions;
     }
 
+    /**
+     * return new regions for update info
+     * @return new regions
+     */
+    public TreeSet<String> getNewRegions() {return newRegions;}
     /**
      * execute query based on the given conditions
      * @param Region region
@@ -61,7 +86,7 @@ public class DataSet {
      */
     public ArrayList<earthQuake> query(String Region, String fromDate, String toDate, double mag) {
         setConnection();
-        if (Region == "Worldwide") Region = "";
+        if (Region == "WORLDWIDE") Region = "";
         //establish jdbc connection
         ArrayList<earthQuake> ans = new ArrayList<>();
         ResultSet resultSet = null;
@@ -239,13 +264,19 @@ public class DataSet {
                 try {
                     Date date3 = df.parse(e.getUTC_date());
                     if(date2.getTime() >= date3.getTime()) {
-                        if(!newQuakes.isEmpty())  newQuakes.remove(newQuakes.size() - 1);
+                        //if(!newQuakes.isEmpty())  newQuakes.remove(newQuakes.size() - 1);
+                        numNew += newQuakes.size();
+                        try {
+                            insertList(newQuakes);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        newQuakes.clear();
                         System.out.println("stop");
                         return 0;
                     } else {
-                        //System.out.println("add: " + e.toString());
                         newQuakes.add(e);
-                        regions.add(e.getRegion());
+                        newRegions.add(e.getRegion());
                     }
                 } catch (ParseException e1) {
                     e1.printStackTrace();
@@ -254,18 +285,10 @@ public class DataSet {
 
             }
 
-            /*
-            int end = uls.size();//> 47? 47:uls.size();
-            for(int i = 54; i < 70; i++) {
-                System.out.println("link #" + i + " "+uls.get(i).attr("abs:href"));
-
-            }
-            */
-            //String txt = uls.get(64 ).attr("abs:href");
-
             System.out.println("last: " + newQuakes.get(newQuakes.size() - 1).toString());
             newQuakes.remove(newQuakes.size() - 1);
             try {
+                numNew += newQuakes.size();
                 insertList(newQuakes);
                 newQuakes.clear();
             } catch (Exception e) {
@@ -317,5 +340,6 @@ public class DataSet {
 
         return e;
     }
+
 
 }

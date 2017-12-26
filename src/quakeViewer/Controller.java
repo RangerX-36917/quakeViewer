@@ -1,4 +1,5 @@
 package quakeViewer;
+import java.awt.event.ActionEvent;
 import  java.time.LocalDate;
 import java.time.format.*;
 import javafx.collections.FXCollections;
@@ -9,8 +10,10 @@ import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 import javax.swing.text.html.ImageView;
 import java.net.URL;
@@ -32,22 +35,47 @@ public class Controller implements Initializable{
     @FXML private Slider magSlider;
     @FXML private DatePicker datePicker1;
     @FXML private DatePicker datePicker2;
-
+    @FXML private Text magBarVal;
+    @FXML private Text sysInfo;
     @FXML private AnchorPane mercratorMap;
-    @FXML private AnchorPane eckertIVMap;
+
     private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
     private DataSet ds1;
     //private TreeSet<String> allRegion;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        regions.add("Worldwide");
-        initializeTable();
+        updateMagVal();
+        magSlider.setShowTickLabels(true);
+        regions.add("WORLDWIDE"); //default region
+        regionChoice.setItems(regions);
+        regionChoice.setValue("WORLDWIDE");
+        datePicker1.setShowWeekNumbers(true);
         ds1 = new DataSet();
         regions.addAll(ds1.getRegions());
         regionChoice.setItems(regions);
+        initializeTable();
+    }
+    @FXML
+    public void dataUpdate() {
+        int x = ds1.update();
+        sysInfo.setFill(Color.BLACK);
+        sysInfo.setText("Update complete, " + x + " new earthquakes fetched");
+        regions.addAll(ds1.getNewRegions());
+        regionChoice.setItems(regions);
+
+    }
+
+    /**
+     *update the value while user move the slider
+     */
+    public void updateMagVal(){
+        double x = magSlider.getValue();
+        x = ((int) (x * 10)) / 10.0; //set precision to 0.1
+        magBarVal.setText(Double.toString(x));
     }
     private void initializeTable() {
         ColID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -57,18 +85,28 @@ public class Controller implements Initializable{
         ColDepth.setCellValueFactory(new PropertyValueFactory<>("depth"));
         ColDate.setCellValueFactory(new PropertyValueFactory<>("UTC_date"));
         ColRegion.setCellValueFactory(new PropertyValueFactory<>("region"));
-        //showTable();
     }
+
+    /**
+     * acquire data based on coditions
+     */
     @FXML
     private void search() {
-        //acquire data set based on conditions
         quakes.clear();
-        //regions.clear();
+
         double mag = magSlider.getValue();
         String region = regionChoice.getValue();
         if(region == null) region = "";
         LocalDate from = datePicker1.getValue();
         LocalDate to = datePicker2.getValue();
+        //If the chosen dates meets requirements, proceed. Otherwise, give an alert
+        if(from != null && to != null && from.isAfter(to) ) {
+            sysInfo.setFill(Color.RED);
+            sysInfo.setText("Error! Make sure the time interval is leagal!");
+
+            return;
+        }
+        //prepare parameters
         String fromDate = "";
         String toDate = "";
         if(from == null) fromDate = "";
@@ -79,18 +117,18 @@ public class Controller implements Initializable{
         if(to != null)
             toDate = dateFormatter.format(to);
         ArrayList<earthQuake> ans = new ArrayList<>();
+        //execute query
         ans = ds1.query(region,fromDate,toDate,mag);
-
+        //print success info
+        sysInfo.setFill(Color.BLACK);
+        sysInfo.setText("Query complete, " + ans.size() + " quakes found.");
+        //present result
         showTable(ans);
         showMercratorMap(ans);
-        showEckertIVMap(ans);
         showMagChart(ans);
         showDateChart(ans);
     }
     private void showTable(ArrayList<earthQuake> data) {
-        for(earthQuake e:data) {
-            System.out.println("result: " + e.toString());
-        }
         quakes.addAll(data);
         dataTable.setItems(quakes);
     }
@@ -101,8 +139,8 @@ public class Controller implements Initializable{
         float magnitude = 0;
         float latitude = 0;
         float longitude = 0;
-        float layoutX=150;
-        float layoutY=71;
+        float layoutX=40;
+        float layoutY=30;
 
         int i = 0;
 
@@ -112,14 +150,8 @@ public class Controller implements Initializable{
             Circle cir1 = new Circle();
             cir1.setRadius(magnitude);
             cir1.setStroke(Color.RED);
-//            cir1.setFill(Color.RED);
-
-            System.out.println("add point");
-            //quakes.addAll(data);
             latitude = e.getLatitude();
             longitude = e.getLongitude();
-            //cir1.setCenterX(68 + 30* (i + 1));
-            //cir1.setCenterY(44 + 30 * (i + 1));
             if (latitude>=0){
                 latitude = layoutY+(90-latitude)/180*600;
             }else {
@@ -141,10 +173,7 @@ public class Controller implements Initializable{
         }
 
     }
-    private void showEckertIVMap(ArrayList<earthQuake> data) {
 
-
-    }
     private void showMagChart(ArrayList<earthQuake> data) {
 
     }
