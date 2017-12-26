@@ -238,10 +238,11 @@ public class DataSet {
                 try {
                     Date date3 = df.parse(e.getUTC_date());
                     if(date2.getTime() >= date3.getTime()) {
+                        if(!newQuakes.isEmpty())  newQuakes.remove(newQuakes.size() - 1);
                         System.out.println("stop");
                         return 0;
                     } else {
-                        System.out.println("add: " + e.toString());
+                        //System.out.println("add: " + e.toString());
                         newQuakes.add(e);
                         regions.add(e.getRegion());
                     }
@@ -261,7 +262,8 @@ public class DataSet {
             */
             //String txt = uls.get(64 ).attr("abs:href");
 
-            System.out.println("last: " + newQuakes.get(newQuakes.size() - 1).toString());newQuakes.remove(newQuakes.size() - 1);
+            System.out.println("last: " + newQuakes.get(newQuakes.size() - 1).toString());
+            newQuakes.remove(newQuakes.size() - 1);
             try {
                 insertList(newQuakes);
                 newQuakes.clear();

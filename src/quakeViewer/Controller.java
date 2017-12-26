@@ -112,8 +112,6 @@ public class Controller implements Initializable{
             cir1.setStroke(Color.RED);
             cir1.setFill(Color.RED);
 
-            System.out.println("add point");
-            //quakes.addAll(data);
             latitude = e.getLatitude();
             longitude = e.getLongitude();
             //cir1.setCenterX(68 + 30* (i + 1));
