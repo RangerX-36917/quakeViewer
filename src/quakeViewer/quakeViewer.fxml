@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -17,7 +23,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="1168.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quakeViewer.Controller">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="1168.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quakeViewer.Controller">
     <opaqueInsets>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </opaqueInsets>
@@ -63,9 +69,9 @@
                     <HBox.margin>
                         <Insets left="20.0" top="20.0" />
                     </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="DEFAULT" />
-               </cursor>
+                    <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                    </cursor>
 
                 </Slider>
             </children>
@@ -112,20 +118,20 @@
                 <Tab text="Mercator Map">
                     <content>
                         <AnchorPane fx:id="mercratorMap" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                                <ImageView fitHeight="709.0" fitWidth="1160.0" layoutX="6.0" layoutY="8.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                            <children>
+                                <ImageView fitHeight="600.0" fitWidth="900.0" layoutX="150.0" layoutY="71.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Mercator.jpg" />
                                     </image>
                                 </ImageView>
-                     </children></AnchorPane>
+                            </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Eckert IV Map">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <ImageView fitHeight="602.0" fitWidth="1171.0" layoutX="15.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView id="eckertIVMap" fitHeight="602.0" fitWidth="1171.0" layoutX="15.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Eckert_IV.png" />
                                     </image>

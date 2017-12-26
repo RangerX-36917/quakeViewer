@@ -61,6 +61,7 @@ public class DataSet {
      */
     public ArrayList<earthQuake> query(String Region, String fromDate, String toDate, double mag) {
         setConnection();
+        if (Region == "Worldwide") Region = "";
         //establish jdbc connection
         ArrayList<earthQuake> ans = new ArrayList<>();
         ResultSet resultSet = null;

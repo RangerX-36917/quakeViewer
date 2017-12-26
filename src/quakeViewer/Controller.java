@@ -34,6 +34,7 @@ public class Controller implements Initializable{
     @FXML private DatePicker datePicker2;
 
     @FXML private AnchorPane mercratorMap;
+    @FXML private AnchorPane eckertIVMap;
     private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
@@ -42,6 +43,7 @@ public class Controller implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        regions.add("Worldwide");
         initializeTable();
         ds1 = new DataSet();
         regions.addAll(ds1.getRegions());
@@ -96,38 +98,40 @@ public class Controller implements Initializable{
         int size = mercratorMap.getChildren().size();
         mercratorMap.getChildren().remove(1,size);
         ArrayList<Circle> circles = new ArrayList<>();
+        float magnitude = 0;
         float latitude = 0;
         float longitude = 0;
-        float layoutX=38;
-        float layoutY=43;
+        float layoutX=150;
+        float layoutY=71;
 
         int i = 0;
 
         for(earthQuake e:data){
-
-
             i++;
+            magnitude = e.getMagnitude();
             Circle cir1 = new Circle();
-            cir1.setRadius(2.0);
+            cir1.setRadius(magnitude);
             cir1.setStroke(Color.RED);
-            cir1.setFill(Color.RED);
+//            cir1.setFill(Color.RED);
 
+            System.out.println("add point");
+            //quakes.addAll(data);
             latitude = e.getLatitude();
             longitude = e.getLongitude();
             //cir1.setCenterX(68 + 30* (i + 1));
             //cir1.setCenterY(44 + 30 * (i + 1));
-
-            if (latitude>0){
-                latitude = layoutY+(90-latitude)*709/90;
+            if (latitude>=0){
+                latitude = layoutY+(90-latitude)/180*600;
             }else {
-                latitude = layoutY+(90+latitude)*709/90;
+                latitude = layoutY+300-(latitude/180)*600;
             }
+
             if(longitude==180){
-                longitude = layoutX+longitude;
-            }else if(longitude>0){
-                longitude = layoutX+longitude*1160/360;
+                longitude = layoutX+900/2;
+            }else if(longitude>=0){
+                longitude = layoutX+longitude*900/360;
             }else {
-                longitude = layoutX+(1160+longitude)*1160/360;
+                longitude = layoutX+900+longitude*900/360;
             }
 
             cir1.setCenterX(longitude);
@@ -138,6 +142,7 @@ public class Controller implements Initializable{
 
     }
     private void showEckertIVMap(ArrayList<earthQuake> data) {
+
 
     }
     private void showMagChart(ArrayList<earthQuake> data) {
@@ -152,6 +157,3 @@ public class Controller implements Initializable{
     }
 
 }
-
-
-
