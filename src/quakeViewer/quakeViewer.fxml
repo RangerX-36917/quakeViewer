@@ -2,6 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -161,7 +164,17 @@
                 </Tab>
                 <Tab text="Chart by Magnitude">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0">
+                            <children>
+                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" layoutX="77.0" layoutY="20.0" prefHeight="600.0" prefWidth="800.0" title="Chart by Magnitude">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="magXAxis" side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="magYAxis" side="LEFT" />
+                                    </yAxis>
+                                </BarChart>
+                            </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Chart by Date">

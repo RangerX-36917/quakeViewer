@@ -7,6 +7,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -39,6 +43,15 @@ public class Controller implements Initializable{
     @FXML private Text sysInfo;
     @FXML private AnchorPane mercratorMap;
 
+    @FXML private BarChart<String,Number> magnitudeChart;
+    @FXML private CategoryAxis magXAxis;
+    @FXML private NumberAxis magYAxis;
+
+    private XYChart.Series<String,Number> seriesMag = new XYChart.Series<>();
+    private ObservableList<XYChart.Data<String,Number>> magnitudeAxis = FXCollections.observableArrayList();
+    private final String[] magnitudes = {"Under 2.0","2.0 to 3.0","3.0 to 4.0","4.0 to 5.0","5.0 to 6.0", "6.0 and over"};
+
+
     private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
@@ -49,11 +62,19 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateMagVal();
+
+//        magnitudeChart = new BarChart<String, Number>(magXAxis,magYAxis);
+        magXAxis.setLabel("Magnitude");
+        magYAxis.setLabel("Number of Quakes");
+
         magSlider.setShowTickLabels(true);
+
         regions.add("WORLDWIDE"); //default region
         regionChoice.setItems(regions);
         regionChoice.setValue("WORLDWIDE");
+
         datePicker1.setShowWeekNumbers(true);
+
         ds1 = new DataSet();
         regions.addAll(ds1.getRegions());
         regionChoice.setItems(regions);
@@ -175,6 +196,39 @@ public class Controller implements Initializable{
     }
 
     private void showMagChart(ArrayList<earthQuake> data) {
+        magnitudeAxis.clear();
+
+//        int size = magnitudeChart.getChildren().size();
+//        magnitudeChart.getChildren().remove(1,size);
+        float magnitude = 0;
+        int[] magCounter = new int[6];
+        for(int i = 0; i<6;i++){
+            magCounter[i] = 0;
+        }
+        int i =0;
+
+        for(earthQuake e:data){
+            magnitude = e.getMagnitude();
+            if(magnitude<=2.0){
+                magCounter[0]++;
+            }else if(magnitude<=3.0){
+                magCounter[1]++;
+            }else if(magnitude<=4.0){
+                magCounter[2]++;
+            }else if(magnitude<=5.0){
+                magCounter[3]++;
+            }else if(magnitude<=6.0){
+                magCounter[4]++;
+            }else{
+                magCounter[5]++;
+            }
+        }
+        for(int j=0;j<6;j++){
+            magnitudeAxis.add(new XYChart.Data<>(magnitudes[j],magCounter[j]));
+        }
+        magnitudeChart.getData().clear();
+        seriesMag.setData(magnitudeAxis);
+        magnitudeChart.getData().add(seriesMag);
 
     }
     private void showDateChart(ArrayList<earthQuake> data) {
