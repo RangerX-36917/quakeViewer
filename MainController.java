@@ -96,19 +96,21 @@ public class MainController implements Initializable{
         int size = mercratorMap.getChildren().size();
         mercratorMap.getChildren().remove(1,size);
         ArrayList<Circle> circles = new ArrayList<>();
+        float magnitude = 0;
         float latitude = 0;
         float longitude = 0;
-        float layoutX=68;
-        float layoutY=17;
+        float layoutX=150;
+        float layoutY=71;
 
         int i = 0;
 
         for(earthQuake e:data){
             i++;
+            magnitude = e.getMagnitude();
             Circle cir1 = new Circle();
-            cir1.setRadius(2.0);
+            cir1.setRadius(magnitude);
             cir1.setStroke(Color.RED);
-            cir1.setFill(Color.RED);
+//            cir1.setFill(Color.RED);
 
             System.out.println("add point");
             //quakes.addAll(data);
@@ -144,8 +146,8 @@ public class MainController implements Initializable{
         ArrayList<Circle> circles = new ArrayList<>();
         float latitude = 0;
         float longitude = 0;
-        float layoutX=150;
-        float layoutY=71;
+        float layoutX=100;
+        float layoutY=120;
 
         int i = 0;
 
