@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
@@ -131,7 +132,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <ImageView id="eckertIVMap" fitHeight="602.0" fitWidth="1171.0" layoutX="15.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView id="eckertIVMap" fitHeight="502.0" fitWidth="1001.0" layoutX="100.0" layoutY="120.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Eckert_IV.png" />
                                     </image>
@@ -141,7 +142,17 @@
                 </Tab>
                 <Tab text="Chart by Magnitude">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0">
+                     <children>
+                        <BarChart id="magnitudeChart" layoutX="77.0" layoutY="20.0" prefHeight="703.0" prefWidth="1046.0" title="Chart by Magnitude">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Chart by Date">
