@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -30,8 +31,8 @@ public class MainController implements Initializable{
     @FXML private Slider magSlider;
     @FXML private DatePicker datePicker1;
     @FXML private DatePicker datePicker2;
-    @FXML private ImageView merchator;
-    @FXML private AnchorPane merchatorMap;
+
+    @FXML private AnchorPane mercratorMap;
     private final String pattern = "yyyy-MM-dd";
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
@@ -91,38 +92,48 @@ public class MainController implements Initializable{
         dataTable.setItems(quakes);
     }
     private void showMercratorMap(ArrayList<earthQuake> data) {
+        int size = mercratorMap.getChildren().size();
+        mercratorMap.getChildren().remove(1,size);
+        ArrayList<Circle> circles = new ArrayList<>();
         float latitude = 0;
         float longitude = 0;
-        float layoutX=38;
-        float layoutY=43;
+        float layoutX=68;
+        float layoutY=17;
 
-        Circle cir1 = new Circle();
-        cir1.setRadius(10.0);
-        cir1.setStroke(Color.RED);
-        cir1.setFill(Color.RED);
+        int i = 0;
 
         for(earthQuake e:data){
-            quakes.addAll(data);
+            i++;
+            Circle cir1 = new Circle();
+            cir1.setRadius(2.0);
+            cir1.setStroke(Color.RED);
+            cir1.setFill(Color.RED);
+
+            System.out.println("add point");
+            //quakes.addAll(data);
             latitude = e.getLatitude();
             longitude = e.getLongitude();
+            //cir1.setCenterX(68 + 30* (i + 1));
+            //cir1.setCenterY(44 + 30 * (i + 1));
+
             if (latitude>0){
-                latitude = layoutY+(90-latitude)*375/90;
+                latitude = layoutY+(90-latitude)*709/90;
             }else {
-                latitude = layoutY+(90+latitude)*375/90;
+                latitude = layoutY+(90+latitude)*709/90;
             }
             if(longitude==180){
-                longitude = layoutX+longitude;
+                longitude = layoutX+1160/2;
             }else if(longitude>0){
-                longitude = layoutX+longitude*1200/360;
+                longitude = layoutX+longitude*1160/180;
             }else {
-                longitude = layoutX+(1200+longitude)*1200/360;
+                longitude = layoutX+(1160+longitude)*1160/180;
             }
+
             cir1.setCenterX(longitude);
             cir1.setCenterY(latitude);
-            merchatorMap.getChildren().add(cir1);
+
+            mercratorMap.getChildren().add(cir1);
         }
-
-
 
     }
     private void showEckertIVMap(ArrayList<earthQuake> data) {
@@ -140,6 +151,3 @@ public class MainController implements Initializable{
     }
 
 }
-
-
-
