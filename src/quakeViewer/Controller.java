@@ -306,60 +306,44 @@ public class Controller implements Initializable{
 
         //generate the date between fromDay and toDay
 
-        Calendar calendar = Calendar.getInstance();
+        System.out.println("there are " + dayNum + "days");
 
 
-        for (int i = 0; i < dayNum; i++) {
-
-
-            c1.add(Calendar.DAY_OF_YEAR, 1);
-
-            Date newDate1 = c1.getTime();
-
-            dateX.add(df.format(newDate1));
-
-            c3.add(Calendar.DAY_OF_YEAR,7);
-
-            Date newDate2 = c3.getTime();
-
-            weekX.add(df.format(newDate2));
-
-            c4.add(Calendar.DAY_OF_YEAR, 30);
-
-            Date newDate3 = c4.getTime();
-
-            monthX.add(df.format(newDate3));
-
-        }
-
-        System.out.println("dateX: " + dateX.size());
+       // System.out.println("dateX: " + dateX.size());
 
         String date = "";
 
         int[] dateCounter = new int[dayNum];
+
         int weekNum;
         int monthNum;
-        if (dayNum % 7 == 0) {
-            weekNum = dayNum / 7;
-        } else {
-            weekNum = dayNum / 7 + 1;
-        }
-        if (dayNum % 30 == 0) {
-            monthNum = dayNum / 30;
-        } else {
-            monthNum = dayNum / 30 + 1;
-        }
+        weekNum = dayNum / 7 + ((dayNum % 7 > 0)? 1 : 0);
+        monthNum = dayNum / 30 + ((dayNum % 30 > 0)? 1 : 0);
 
-        int[] weekCounter = new int[weekNum];
-        int[] monthCounter = new int[monthNum];
+        int[] weekCounter = new int[weekNum + 1];
+        int[] monthCounter = new int[monthNum + 1];
 
         for (int i = 0; i < dayNum; i++) {
+            c1.add(Calendar.DAY_OF_YEAR, 1);
+            Date newDate = c1.getTime();
+            dateX.add(df.format(newDate));
             dateCounter[i] = 0;
         }
+        c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
         for (int i = 0; i < weekNum; i++) {
+            c1.add(Calendar.WEEK_OF_YEAR,1);
+            Date newDate = c1.getTime();
+            System.out.println("add week " + df.format(newDate) + "i: " + i);
+            weekX.add(df.format(newDate));
             weekCounter[i] = 0;
         }
+        c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
         for (int i = 0; i < monthNum; i++) {
+            c1.add(Calendar.MONTH, 1);
+            Date newDate = c1.getTime();
+            System.out.println("add month " + df.format(newDate) + "i: " + i);
+            monthX.add(df.format(newDate));
+
             monthCounter[i] = 0;
         }
 
@@ -401,11 +385,12 @@ public class Controller implements Initializable{
 
 
         }
+        System.out.println("weekX num:" + weekX.size() + "weekNum: " + weekNum);
         if(dayNum<=30) {
 
-            for (int k = 0; k < dayNum; k++) {
-
-                System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k + "]  " + dateCounter[k]);
+            for (int k = 0; k < dayNum ; k++) {
+                seriesDate.setName("Number of earthquakes by day");
+                //System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k + "]  " + dateCounter[k]);
 
                 dateAxis.add(new XYChart.Data<>(dateX.get(k), dateCounter[k]));
 
@@ -413,6 +398,7 @@ public class Controller implements Initializable{
         }else if(dayNum<=140) {
 
             for(int k = 0; k < weekNum; k++){
+                seriesDate.setName("Number of earthquakes by week");
 
                 System.out.println("weekX[" + k + "]: " + weekX.get(k) + "  weekCounter[" + k + "]  " + weekCounter[k]);
 
@@ -421,7 +407,8 @@ public class Controller implements Initializable{
             }
         }else{
 
-            for(int k =0; k < monthNum; k++){
+            for(int k = 0; k < monthNum; k++){
+                seriesDate.setName("Number of earthquakes by month");
 
                 System.out.println("monthX[" + k + "]: " + monthX.get(k) + "  monthCounter[" + k + "]  " + monthCounter[k]);
 
