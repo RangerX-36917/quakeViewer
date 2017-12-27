@@ -39,7 +39,7 @@ public class DataSet {
             System.out.println("current max date: " + maxDate);
             onlineUpdate(1,maxDate);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
         closeConnection();
@@ -56,7 +56,7 @@ public class DataSet {
             System.out.println("current max date: " + maxDate);
             onlineUpdate(1,maxDate);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         System.out.println("update complete");
         closeConnection();
@@ -115,7 +115,7 @@ public class DataSet {
 
             }
         } catch (SQLException sqlE) {
-            sqlE.printStackTrace();
+            System.err.println(sqlE.getMessage());
         }
         closeConnection();
         return ans;
@@ -140,10 +140,10 @@ public class DataSet {
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         } catch (SQLException sqlE) {
             System.out.println(sqlE);
-            sqlE.printStackTrace();
+            System.err.println(sqlE.getMessage());
         }
 
     }
@@ -230,7 +230,7 @@ public class DataSet {
         try {
             date2 = df.parse(maxDate);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
 
 
@@ -292,7 +292,7 @@ public class DataSet {
                 insertList(newQuakes);
                 newQuakes.clear();
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
             }
 
             if(onlineUpdate(pgNum + 1, maxDate) == 0) {
@@ -301,7 +301,7 @@ public class DataSet {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return 1;
     }

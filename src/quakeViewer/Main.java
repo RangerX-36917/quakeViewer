@@ -18,7 +18,7 @@ public class Main extends Application {
         fxmlLoader.setLocation(getClass().getResource("quakeViewer.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setTitle("Earth Quake Viewer");
-        primaryStage.setScene(new Scene(root, 977, 800));
+        primaryStage.setScene(new Scene(root, 977, 900));
         primaryStage.show();
 
     }

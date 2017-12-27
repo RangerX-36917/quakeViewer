@@ -112,16 +112,16 @@
          <children>
             <AnchorPane layoutX="200.0" prefHeight="26.0" prefWidth="897.0">
                <children>
-                      <Button contentDisplay="BOTTOM" layoutX="822.0" mnemonicParsing="false" onMouseClicked="#search" prefHeight="30.0" prefWidth="75.0" text="Search" textAlignment="CENTER">
+                      <Button fx:id="searchButton" contentDisplay="BOTTOM" layoutX="822.0" mnemonicParsing="false" onMouseClicked="#search" prefHeight="30.0" prefWidth="75.0" text="Search" textAlignment="CENTER">
                      <font>
                         <Font size="15.0" />
                      </font></Button>
-                  <Text fx:id="sysInfo" layoutX="14.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please press &quot;Update Data&quot; before your first search.">
+                  <Text fx:id="sysInfo" layoutX="14.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Latest earthquakes fetched. ">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Text>
-                  <Button layoutX="634.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#dataUpdate" text="Update Data">
+                  <Button fx:id="updateButton" layoutX="634.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#dataUpdate" text="Update Data">
                      <font>
                         <Font size="15.0" />
                      </font>
@@ -166,7 +166,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0">
                             <children>
-                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" alternativeRowFillVisible="false" layoutX="77.0" layoutY="20.0" prefHeight="600.0" prefWidth="800.0" title="Chart by Magnitude" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" alternativeRowFillVisible="false" barGap="3.0" layoutX="58.0" layoutY="20.0" legendSide="RIGHT" prefHeight="600.0" prefWidth="838.0" title="Chart by Magnitude" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
                                     <xAxis>
                                         <CategoryAxis fx:id="magXAxis" side="BOTTOM" />
                                     </xAxis>

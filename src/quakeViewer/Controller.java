@@ -26,9 +26,10 @@ import java.util.ResourceBundle;
 import java.util.TreeSet;
 
 public class Controller implements Initializable{
-
-    @FXML private TableView<earthQuake> dataTable;
+    @FXML private Button searchButton;
+    @FXML private Button updateButton;
     @FXML private ChoiceBox<String> regionChoice;
+    @FXML private TableView<earthQuake> dataTable;
     @FXML private TableColumn<earthQuake, String> ColID;
     @FXML private TableColumn<earthQuake, String> ColLatitude;
     @FXML private TableColumn<earthQuake, String> ColLongitude;
@@ -58,10 +59,16 @@ public class Controller implements Initializable{
     private DataSet ds1;
     //private TreeSet<String> allRegion;
 
-
+    private final Tooltip tooltip1 = new Tooltip("Tooltip for Button");
+    private final Tooltip tooltip2 = new Tooltip();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        tooltip1.setText("Fetch latest earthquakes");
+
+        tooltip2.setText("Search earthquakes you wanted");
         updateMagVal();
+        updateButton.setTooltip(tooltip1);
+        searchButton.setTooltip(tooltip2);
 
 //        magnitudeChart = new BarChart<String, Number>(magXAxis,magYAxis);
         magXAxis.setLabel("Magnitude");
@@ -212,7 +219,7 @@ public class Controller implements Initializable{
         }
         int i =0;
 
-        for(earthQuake e:data){
+        for(earthQuake e:data  ){
             magnitude = e.getMagnitude();
             magnitude = (((int)(magnitude*10))/10.0);
             if(magnitude<=2.0){
@@ -234,12 +241,12 @@ public class Controller implements Initializable{
         System.out.println();
         if(magnitudeAxis.isEmpty())
         for(int j=0;j<6;j++){
-
             magnitudeAxis.add(new XYChart.Data<>(magnitudes[j],magCounter[j]));
-            System.out.println("mag " + (j + 1) + " " + magCounter[j] + " - " + magnitudeAxis.get(j).getYValue());
         }
         //magnitudeChart.getData().clear();
         seriesMag.setData(magnitudeAxis);
+        seriesMag.setName("Number");
+
 
 
     }
