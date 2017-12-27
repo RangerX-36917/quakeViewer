@@ -179,7 +179,17 @@
                 </Tab>
                 <Tab text="Chart by Date">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <BarChart id="dateChart" fx:id="dateChart" layoutX="79.0" layoutY="49.0" prefHeight="548.0" prefWidth="819.0" title="Quake by Date">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="dateXAxis" side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="dateYAxis" side="LEFT" />
+                                    </yAxis>
+                                </BarChart>
+                            </children></AnchorPane>
                     </content>
                 </Tab>
             </tabs>
