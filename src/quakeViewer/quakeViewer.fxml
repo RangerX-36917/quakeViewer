@@ -166,7 +166,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0">
                             <children>
-                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" layoutX="77.0" layoutY="20.0" prefHeight="600.0" prefWidth="800.0" title="Chart by Magnitude">
+                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" alternativeRowFillVisible="false" layoutX="77.0" layoutY="20.0" prefHeight="600.0" prefWidth="800.0" title="Chart by Magnitude" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
                                     <xAxis>
                                         <CategoryAxis fx:id="magXAxis" side="BOTTOM" />
                                     </xAxis>

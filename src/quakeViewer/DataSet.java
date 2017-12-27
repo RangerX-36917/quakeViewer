@@ -207,7 +207,7 @@ public class DataSet {
     }
     private String queryRegion(String Region) {
         if(!Objects.equals(Region, "")) {
-            String s = "AND (region = '" + Region + "' ) ";
+            String s = "AND (region = '" + Region.replace("'","''") + "' ) ";
             return s;
         } else return "";
     }

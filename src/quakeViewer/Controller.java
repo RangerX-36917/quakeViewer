@@ -48,7 +48,7 @@ public class Controller implements Initializable{
     @FXML private NumberAxis magYAxis;
 
     private XYChart.Series<String,Number> seriesMag = new XYChart.Series<>();
-    private ObservableList<XYChart.Data<String,Number>> magnitudeAxis = FXCollections.observableArrayList();
+
     private final String[] magnitudes = {"Under 2.0","2.0 to 3.0","3.0 to 4.0","4.0 to 5.0","5.0 to 6.0", "6.0 and over"};
 
 
@@ -66,6 +66,7 @@ public class Controller implements Initializable{
 //        magnitudeChart = new BarChart<String, Number>(magXAxis,magYAxis);
         magXAxis.setLabel("Magnitude");
         magYAxis.setLabel("Number of Quakes");
+        magnitudeChart.getData().add(seriesMag);
 
         magSlider.setShowTickLabels(true);
 
@@ -78,7 +79,11 @@ public class Controller implements Initializable{
         ds1 = new DataSet();
         regions.addAll(ds1.getRegions());
         regionChoice.setItems(regions);
+
         initializeTable();
+
+        datePicker1.setValue(LocalDate.of(2015,12,12));
+        datePicker2.setValue(LocalDate.now());
     }
     @FXML
     public void dataUpdate() {
@@ -196,12 +201,12 @@ public class Controller implements Initializable{
     }
 
     private void showMagChart(ArrayList<earthQuake> data) {
-        magnitudeAxis.clear();
+        ObservableList<XYChart.Data<String,Number>> magnitudeAxis = FXCollections.observableArrayList();
 
 //        int size = magnitudeChart.getChildren().size();
 //        magnitudeChart.getChildren().remove(1,size);
-        float magnitude = 0;
-        int[] magCounter = new int[6];
+        double magnitude = 0;
+        int[] magCounter = new int[15];
         for(int i = 0; i<6;i++){
             magCounter[i] = 0;
         }
@@ -209,6 +214,7 @@ public class Controller implements Initializable{
 
         for(earthQuake e:data){
             magnitude = e.getMagnitude();
+            magnitude = (((int)(magnitude*10))/10.0);
             if(magnitude<=2.0){
                 magCounter[0]++;
             }else if(magnitude<=3.0){
@@ -223,12 +229,18 @@ public class Controller implements Initializable{
                 magCounter[5]++;
             }
         }
+        magnitudeAxis.clear();
+
+        System.out.println();
+        if(magnitudeAxis.isEmpty())
         for(int j=0;j<6;j++){
+
             magnitudeAxis.add(new XYChart.Data<>(magnitudes[j],magCounter[j]));
+            System.out.println("mag " + (j + 1) + " " + magCounter[j] + " - " + magnitudeAxis.get(j).getYValue());
         }
-        magnitudeChart.getData().clear();
+        //magnitudeChart.getData().clear();
         seriesMag.setData(magnitudeAxis);
-        magnitudeChart.getData().add(seriesMag);
+
 
     }
     private void showDateChart(ArrayList<earthQuake> data) {
