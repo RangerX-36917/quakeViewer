@@ -95,7 +95,7 @@ public class Controller implements Initializable{
 
         initializeTable();
 
-        datePicker1.setValue(LocalDate.of(2015,12,12));
+        datePicker1.setValue(LocalDate.of(2016,10,1));
         datePicker2.setValue(LocalDate.now());
     }
     @FXML
@@ -163,7 +163,8 @@ public class Controller implements Initializable{
         //print success info
         sysInfo.setFill(Color.BLACK);
         sysInfo.setText("Query complete, " + ans.size() + " quakes found.");
-
+        seriesDate.getData().clear();
+        seriesMag.getData().clear();
         //present result
         showTable(ans);
         showMercratorMap(ans);
@@ -269,63 +270,168 @@ public class Controller implements Initializable{
      * @param data data acquired from query
      */
     private void showDateChart(ArrayList<earthQuake> data) {
-        ObservableList<XYChart.Data<String,Number>> dateAxis = FXCollections.observableArrayList();
+
+        ObservableList<XYChart.Data<String, Number>> dateAxis = FXCollections.observableArrayList();
+
         ArrayList<String> dateX = new ArrayList<>();
+        ArrayList<String> weekX = new ArrayList<>();
+        ArrayList<String> monthX = new ArrayList<>();
+
         dateAxis.clear();
+
         LocalDate fromDay = datePicker1.getValue();
-        Calendar c1 =  Calendar.getInstance();
+
+        Calendar c1 = Calendar.getInstance();
+
         c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
+
         Date from = c1.getTime();
+        Calendar c3 = c1;
+        Calendar c4 = c1;
 
         LocalDate toDay = datePicker2.getValue();
-        Calendar c2 =  Calendar.getInstance();
+
+        Calendar c2 = Calendar.getInstance();
+
         c2.set(toDay.getYear(), toDay.getMonthValue() - 1, toDay.getDayOfMonth());
+
         Date to = c2.getTime();
 
-        //calculate days between fromDay and toDay
-        int dayNum=  (int) ((to.getTime() - from.getTime()) / (1000*3600*24));
-        SimpleDateFormat df = new SimpleDateFormat(pattern);
-        //generate the date between fromDay and toDay
-        Calendar calendar=Calendar.getInstance();
 
-        for(int i=0;i<dayNum;i++){
+        //calculate days between fromDay and toDay
+
+        int dayNum = (int) ((to.getTime() - from.getTime()) / (1000 * 3600 * 24));
+
+        SimpleDateFormat df = new SimpleDateFormat(pattern);
+
+        //generate the date between fromDay and toDay
+
+        Calendar calendar = Calendar.getInstance();
+
+
+        for (int i = 0; i < dayNum; i++) {
+
 
             c1.add(Calendar.DAY_OF_YEAR, 1);
-            Date newDate = c1.getTime();
-            dateX.add(df.format(newDate));
-        }
-        System.out.println("dateX: " + dateX.size());
-        String date="";
-        int[] dateCounter = new int[dayNum];
-        for(int i=0;i<dayNum;i++){
-            dateCounter[i]=0;
-        }
-        int i=0;
 
-        for(earthQuake e:data) {
-            date=e.getUTC_date().substring(0,10);
+            Date newDate1 = c1.getTime();
+
+            dateX.add(df.format(newDate1));
+
+            c3.add(Calendar.DAY_OF_YEAR,7);
+
+            Date newDate2 = c3.getTime();
+
+            weekX.add(df.format(newDate2));
+
+            c4.add(Calendar.DAY_OF_YEAR, 30);
+
+            Date newDate3 = c4.getTime();
+
+            monthX.add(df.format(newDate3));
+
+        }
+
+        System.out.println("dateX: " + dateX.size());
+
+        String date = "";
+
+        int[] dateCounter = new int[dayNum];
+        int weekNum;
+        int monthNum;
+        if (dayNum % 7 == 0) {
+            weekNum = dayNum / 7;
+        } else {
+            weekNum = dayNum / 7 + 1;
+        }
+        if (dayNum % 30 == 0) {
+            monthNum = dayNum / 30;
+        } else {
+            monthNum = dayNum / 30 + 1;
+        }
+
+        int[] weekCounter = new int[weekNum];
+        int[] monthCounter = new int[monthNum];
+
+        for (int i = 0; i < dayNum; i++) {
+            dateCounter[i] = 0;
+        }
+        for (int i = 0; i < weekNum; i++) {
+            weekCounter[i] = 0;
+        }
+        for (int i = 0; i < monthNum; i++) {
+            monthCounter[i] = 0;
+        }
+
+
+        int i = 0;
+
+
+        for (earthQuake e : data) {
+
+            date = e.getUTC_date().substring(0, 10);
+
 
             Date date1 = null;
+
             try {
+
                 //System.out.println(date);
+
                 date1 = df.parse(date);
+
             } catch (ParseException e1) {
+
                 e1.printStackTrace();
+
             }
+
             //for(int j=0;j<dayNum;j++){
-                int n=(int)((date1.getTime()-from.getTime())/86400000);
-               // System.out.println("n: " + n);
-                //find the difference between date encountered and fromDate
-                dateCounter[n]++;
+
+            int n = (int) ((date1.getTime() - from.getTime()) / 86400000);
+
+            // System.out.println("n: " + n);
+
+            //find the difference between date encountered and fromDate
+
+            dateCounter[n]++;
+            weekCounter[n / 7]++;
+            monthCounter[n / 30]++;
             //}
 
-        }
-        for(int k=0;k<dayNum;k++){
-            System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k +"]  " + dateCounter[k]);
-            dateAxis.add(new XYChart.Data<>(dateX.get(k),dateCounter[k]));
-        }
 
+        }
+        if(dayNum<=30) {
+
+            for (int k = 0; k < dayNum; k++) {
+
+                System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k + "]  " + dateCounter[k]);
+
+                dateAxis.add(new XYChart.Data<>(dateX.get(k), dateCounter[k]));
+
+            }
+        }else if(dayNum<=140) {
+
+            for(int k = 0; k < weekNum; k++){
+
+                System.out.println("weekX[" + k + "]: " + weekX.get(k) + "  weekCounter[" + k + "]  " + weekCounter[k]);
+
+                dateAxis.add(new XYChart.Data<>(weekX.get(k), weekCounter[k]));
+
+            }
+        }else{
+
+            for(int k =0; k < monthNum; k++){
+
+                System.out.println("monthX[" + k + "]: " + monthX.get(k) + "  monthCounter[" + k + "]  " + monthCounter[k]);
+
+                dateAxis.add(new XYChart.Data<>(monthX.get(k), monthCounter[k]));
+
+            }
+        }
         seriesDate.setData(dateAxis);
+
+
 
     }
     @FXML
