@@ -1,14 +1,15 @@
-package quakeViewer;
-import java.awt.event.ActionEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import  java.time.LocalDate;
-import java.time.format.*;
+package java2Proj45;
+/**
+ * Controller class for GUI
+ * @author 11612028 CHEN Shijie
+ * @author 11612007 ZHOU Zhenglan
+ * @author 11611628 PENG Xiaoru
+ */
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -16,56 +17,76 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import javax.swing.text.html.ImageView;
 import java.net.URL;
-import java.util.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.ResourceBundle;
 
-public class Controller implements Initializable{
-    @FXML private Button searchButton;
-    @FXML private Button updateButton;
-    @FXML private ChoiceBox<String> regionChoice;
-    @FXML private TableView<earthQuake> dataTable;
-    @FXML private TableColumn<earthQuake, String> ColID;
-    @FXML private TableColumn<earthQuake, String> ColLatitude;
-    @FXML private TableColumn<earthQuake, String> ColLongitude;
-    @FXML private TableColumn<earthQuake, String> ColMag;
-    @FXML private TableColumn<earthQuake, String> ColDepth;
-    @FXML private TableColumn<earthQuake, String> ColDate;
-    @FXML private TableColumn<earthQuake, String> ColRegion;
-    @FXML private Slider magSlider;
-    @FXML private DatePicker datePicker1;
-    @FXML private DatePicker datePicker2;
-    @FXML private Text magBarVal;
-    @FXML private Text sysInfo;
-    @FXML private AnchorPane mercratorMap;
-
-    @FXML private BarChart<String,Number> magnitudeChart;
-    @FXML private BarChart<String,Number> dateChart;
-    @FXML private CategoryAxis magXAxis;
-    @FXML private NumberAxis magYAxis;
-
-
-
-
-    private XYChart.Series<String,Number> seriesMag = new XYChart.Series<>();
-
-    private final String[] magnitudes = {"Under 2.0","2.0 to 3.0","3.0 to 4.0","4.0 to 5.0","5.0 to 6.0", "6.0 and over"};
-
-
+public class Controller implements Initializable {
+    private final String[] magnitudes = {"Under 2.0", "2.0 to 3.0", "3.0 to 4.0", "4.0 to 5.0", "5.0 to 6.0", "6.0 and over"};
     private final String pattern = "yyyy-MM-dd";
+    private final Tooltip tooltip1 = new Tooltip("Tooltip for Button");
+    private final Tooltip tooltip2 = new Tooltip();
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Button updateButton;
+    @FXML
+    private ChoiceBox<String> regionChoice;
+    @FXML
+    private TableView<earthQuake> dataTable;
+    @FXML
+    private TableColumn<earthQuake, String> ColID;
+    @FXML
+    private TableColumn<earthQuake, String> ColLatitude;
+    @FXML
+    private TableColumn<earthQuake, String> ColLongitude;
+    @FXML
+    private TableColumn<earthQuake, String> ColMag;
+    @FXML
+    private TableColumn<earthQuake, String> ColDepth;
+    @FXML
+    private TableColumn<earthQuake, String> ColDate;
+    @FXML
+    private TableColumn<earthQuake, String> ColRegion;
+    @FXML
+    private Slider magSlider;
+    @FXML
+    private DatePicker datePicker1;
+    @FXML
+    private DatePicker datePicker2;
+    @FXML
+    private Text magBarVal;
+    @FXML
+    private Text sysInfo;
+    @FXML
+    private AnchorPane mercratorMap;
+    @FXML
+    private BarChart<String, Number> magnitudeChart;
+    @FXML
+    private BarChart<String, Number> dateChart;
+    @FXML
+    private CategoryAxis magXAxis;
+    @FXML
+    private NumberAxis magYAxis;
+    private XYChart.Series<String, Number> seriesMag = new XYChart.Series<>();
     private ObservableList<earthQuake> quakes = FXCollections.observableArrayList();
     private ObservableList<String> regions = FXCollections.observableArrayList();
     private DataSet ds1;
-    //private TreeSet<String> allRegion;
-
-    private final Tooltip tooltip1 = new Tooltip("Tooltip for Button");
-    private final Tooltip tooltip2 = new Tooltip();
-
+    @FXML
+    private CategoryAxis dateXAxis;
+    @FXML
+    private NumberAxis dateYAxis;
+    private XYChart.Series<String, Number> seriesDate = new XYChart.Series<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -76,7 +97,6 @@ public class Controller implements Initializable{
         updateButton.setTooltip(tooltip1);
         searchButton.setTooltip(tooltip2);
 
-//        magnitudeChart = new BarChart<String, Number>(magXAxis,magYAxis);
         magXAxis.setLabel("Magnitude");
         magYAxis.setLabel("Number of Quakes");
         magnitudeChart.getData().add(seriesMag);
@@ -95,9 +115,10 @@ public class Controller implements Initializable{
 
         initializeTable();
 
-        datePicker1.setValue(LocalDate.of(2016,10,1));
-        datePicker2.setValue(LocalDate.now());
+        datePicker1.setValue(LocalDate.of(2016, 10, 1));
+        datePicker2.setValue(LocalDate.now().plusDays(1));
     }
+
     @FXML
     public void dataUpdate() {
         int x = ds1.update();
@@ -109,13 +130,14 @@ public class Controller implements Initializable{
     }
 
     /**
-     *update the value while user move the slider
+     * update the value while user move the slider
      */
-    public void updateMagVal(){
+    public void updateMagVal() {
         double x = magSlider.getValue();
         x = ((int) (x * 10)) / 10.0; //set precision to 0.1
         magBarVal.setText(Double.toString(x));
     }
+
     private void initializeTable() {
         ColID.setCellValueFactory(new PropertyValueFactory<>("id"));
         ColMag.setCellValueFactory(new PropertyValueFactory<>("magnitude"));
@@ -127,7 +149,7 @@ public class Controller implements Initializable{
     }
 
     /**
-     * acquire data based on coditions
+     * acquire data based on conditions
      */
     @FXML
     private void search() {
@@ -135,11 +157,11 @@ public class Controller implements Initializable{
 
         double mag = magSlider.getValue();
         String region = regionChoice.getValue();
-        if(region == null) region = "";
+        if (region == null) region = "";
         LocalDate from = datePicker1.getValue();
         LocalDate to = datePicker2.getValue();
         //If the chosen dates meets requirements, proceed. Otherwise, give an alert
-        if(from != null && to != null && from.isAfter(to) ) {
+        if (from != null && to != null && from.isAfter(to)) {
             sysInfo.setFill(Color.RED);
             sysInfo.setText("Error! Make sure the time interval is leagal!");
 
@@ -148,17 +170,17 @@ public class Controller implements Initializable{
         //prepare parameters
         String fromDate = "";
         String toDate = "";
-        if(from == null) fromDate = "";
-        if(to == null) toDate = "";
+        if (from == null) fromDate = "";
+        if (to == null) toDate = "";
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
-        if(from != null)
+        if (from != null)
             fromDate = dateFormatter.format(from);
-        if(to != null)
+        if (to != null)
             toDate = dateFormatter.format(to);
         ArrayList<earthQuake> ans = new ArrayList<>();
 
         //execute query
-        ans = ds1.query(region,fromDate,toDate,mag);
+        ans = ds1.query(region, fromDate, toDate, mag);
 
         //print success info
         sysInfo.setFill(Color.BLACK);
@@ -171,23 +193,32 @@ public class Controller implements Initializable{
         showMagChart(ans);
         showDateChart(ans);
     }
+
+    /**
+     * show data table
+     * @param data data acquired through query
+     */
     private void showTable(ArrayList<earthQuake> data) {
         quakes.addAll(data);
         dataTable.setItems(quakes);
     }
+
+    /**
+     * draw mercrator map
+     * @param data data acquired through query
+     */
     private void showMercratorMap(ArrayList<earthQuake> data) {
         int size = mercratorMap.getChildren().size();
-        mercratorMap.getChildren().remove(1,size);
-        ArrayList<Circle> circles = new ArrayList<>();
+        mercratorMap.getChildren().remove(1, size);
         float magnitude = 0;
         float latitude = 0;
         float longitude = 0;
-        float layoutX=40;
-        float layoutY=30;
+        float layoutX = 40;
+        float layoutY = 30;
 
         int i = 0;
 
-        for(earthQuake e:data){
+        for (earthQuake e : data) {
             i++;
             magnitude = e.getMagnitude();
             Circle cir1 = new Circle();
@@ -195,18 +226,18 @@ public class Controller implements Initializable{
             cir1.setStroke(Color.RED);
             latitude = e.getLatitude();
             longitude = e.getLongitude();
-            if (latitude>=0){
-                latitude = layoutY+(90-latitude)/180*600;
-            }else {
-                latitude = layoutY+300-(latitude/180)*600;
+            if (latitude >= 0) {
+                latitude = layoutY + (90 - latitude) / 180 * 600;
+            } else {
+                latitude = layoutY + 300 - (latitude / 180) * 600;
             }
 
-            if(longitude==180){
-                longitude = layoutX+900/2;
-            }else if(longitude>=0){
-                longitude = layoutX+longitude*900/360;
-            }else {
-                longitude = layoutX+900+longitude*900/360;
+            if (longitude == 180) {
+                longitude = layoutX + 900 / 2;
+            } else if (longitude >= 0) {
+                longitude = layoutX + longitude * 900 / 360;
+            } else {
+                longitude = layoutX + 900 + longitude * 900 / 360;
             }
 
             cir1.setCenterX(longitude);
@@ -217,56 +248,54 @@ public class Controller implements Initializable{
 
     }
 
+    /**
+     * draw bar chart of number-magnitude
+     * @param data
+     */
     private void showMagChart(ArrayList<earthQuake> data) {
-        ObservableList<XYChart.Data<String,Number>> magnitudeAxis = FXCollections.observableArrayList();
+        ObservableList<XYChart.Data<String, Number>> magnitudeAxis = FXCollections.observableArrayList();
 
 //        int size = magnitudeChart.getChildren().size();
 //        magnitudeChart.getChildren().remove(1,size);
         double magnitude = 0;
         int[] magCounter = new int[15];
-        for(int i = 0; i<6;i++){
+        for (int i = 0; i < 6; i++) {
             magCounter[i] = 0;
         }
-        int i =0;
+        int i = 0;
 
-        for(earthQuake e:data  ){
+        for (earthQuake e : data) {
             magnitude = e.getMagnitude();
-            magnitude = (((int)(magnitude*10))/10.0);
-            if(magnitude<=2.0){
+            magnitude = (((int) (magnitude * 10)) / 10.0);
+            if (magnitude <= 2.0) {
                 magCounter[0]++;
-            }else if(magnitude<=3.0){
+            } else if (magnitude <= 3.0) {
                 magCounter[1]++;
-            }else if(magnitude<=4.0){
+            } else if (magnitude <= 4.0) {
                 magCounter[2]++;
-            }else if(magnitude<=5.0){
+            } else if (magnitude <= 5.0) {
                 magCounter[3]++;
-            }else if(magnitude<=6.0){
+            } else if (magnitude <= 6.0) {
                 magCounter[4]++;
-            }else{
+            } else {
                 magCounter[5]++;
             }
         }
         magnitudeAxis.clear();
 
         System.out.println();
-        if(magnitudeAxis.isEmpty())
-        for(int j=0;j<6;j++){
-            magnitudeAxis.add(new XYChart.Data<>(magnitudes[j],magCounter[j]));
-        }
+        if (magnitudeAxis.isEmpty())
+            for (int j = 0; j < 6; j++) {
+                magnitudeAxis.add(new XYChart.Data<>(magnitudes[j], magCounter[j]));
+            }
         //magnitudeChart.getData().clear();
         seriesMag.setData(magnitudeAxis);
         seriesMag.setName("Number");
 
     }
-    @FXML
-    private CategoryAxis dateXAxis;
-    @FXML
-    private NumberAxis dateYAxis;
-
-    private XYChart.Series<String,Number> seriesDate = new XYChart.Series<>();
 
     /**
-     * generate chart of number of earthquakes-data
+     * draw bar chart of number-time
      * @param data data acquired from query
      */
     private void showDateChart(ArrayList<earthQuake> data) {
@@ -280,9 +309,7 @@ public class Controller implements Initializable{
         dateAxis.clear();
 
         LocalDate fromDay = datePicker1.getValue();
-
         Calendar c1 = Calendar.getInstance();
-
         c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
 
         Date from = c1.getTime();
@@ -290,35 +317,23 @@ public class Controller implements Initializable{
         Calendar c4 = c1;
 
         LocalDate toDay = datePicker2.getValue();
-
         Calendar c2 = Calendar.getInstance();
-
         c2.set(toDay.getYear(), toDay.getMonthValue() - 1, toDay.getDayOfMonth());
-
         Date to = c2.getTime();
 
 
-        //calculate days between fromDay and toDay
-
+        //calculate the number of days between fromDay and toDay
         int dayNum = (int) ((to.getTime() - from.getTime()) / (1000 * 3600 * 24));
 
         SimpleDateFormat df = new SimpleDateFormat(pattern);
 
-        //generate the date between fromDay and toDay
-
-        System.out.println("there are " + dayNum + "days");
-
-
-       // System.out.println("dateX: " + dateX.size());
-
+        //count day, week and month between fromDay and toDay
         String date = "";
-
         int[] dateCounter = new int[dayNum];
-
         int weekNum;
         int monthNum;
-        weekNum = dayNum / 7 + ((dayNum % 7 > 0)? 1 : 0);
-        monthNum = dayNum / 30 + ((dayNum % 30 > 0)? 1 : 0);
+        weekNum = dayNum / 7 + ((dayNum % 7 > 0) ? 1 : 0);
+        monthNum = dayNum / 30 + ((dayNum % 30 > 0) ? 1 : 0);
 
         int[] weekCounter = new int[weekNum + 1];
         int[] monthCounter = new int[monthNum + 1];
@@ -331,9 +346,8 @@ public class Controller implements Initializable{
         }
         c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
         for (int i = 0; i < weekNum; i++) {
-            c1.add(Calendar.WEEK_OF_YEAR,1);
+            c1.add(Calendar.WEEK_OF_YEAR, 1);
             Date newDate = c1.getTime();
-            System.out.println("add week " + df.format(newDate) + "i: " + i);
             weekX.add(df.format(newDate));
             weekCounter[i] = 0;
         }
@@ -341,16 +355,10 @@ public class Controller implements Initializable{
         for (int i = 0; i < monthNum; i++) {
             c1.add(Calendar.MONTH, 1);
             Date newDate = c1.getTime();
-            System.out.println("add month " + df.format(newDate) + "i: " + i);
             monthX.add(df.format(newDate));
-
             monthCounter[i] = 0;
         }
-
-
         int i = 0;
-
-
         for (earthQuake e : data) {
 
             date = e.getUTC_date().substring(0, 10);
@@ -369,61 +377,33 @@ public class Controller implements Initializable{
                 e1.printStackTrace();
 
             }
-
-            //for(int j=0;j<dayNum;j++){
-
             int n = (int) ((date1.getTime() - from.getTime()) / 86400000);
 
-            // System.out.println("n: " + n);
-
             //find the difference between date encountered and fromDate
-
             dateCounter[n]++;
             weekCounter[n / 7]++;
             monthCounter[n / 30]++;
-            //}
-
-
         }
-        System.out.println("weekX num:" + weekX.size() + "weekNum: " + weekNum);
-        if(dayNum<=30) {
+        if (dayNum <= 30) {
 
-            for (int k = 0; k < dayNum ; k++) {
+            for (int k = 0; k < dayNum; k++) {
                 seriesDate.setName("Number of earthquakes by day");
-                //System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k + "]  " + dateCounter[k]);
-
                 dateAxis.add(new XYChart.Data<>(dateX.get(k), dateCounter[k]));
-
             }
-        }else if(dayNum<=140) {
+        } else if (dayNum <= 140) {
 
-            for(int k = 0; k < weekNum; k++){
+            for (int k = 0; k < weekNum; k++) {
                 seriesDate.setName("Number of earthquakes by week");
-
-                System.out.println("weekX[" + k + "]: " + weekX.get(k) + "  weekCounter[" + k + "]  " + weekCounter[k]);
-
                 dateAxis.add(new XYChart.Data<>(weekX.get(k), weekCounter[k]));
-
             }
-        }else{
+        } else {
 
-            for(int k = 0; k < monthNum; k++){
+            for (int k = 0; k < monthNum; k++) {
                 seriesDate.setName("Number of earthquakes by month");
-
-                System.out.println("monthX[" + k + "]: " + monthX.get(k) + "  monthCounter[" + k + "]  " + monthCounter[k]);
-
                 dateAxis.add(new XYChart.Data<>(monthX.get(k), monthCounter[k]));
-
             }
         }
         seriesDate.setData(dateAxis);
-
-
-
-    }
-    @FXML
-    private void reset() {
-        magSlider.setValue(0);
     }
 
 }

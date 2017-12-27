@@ -1,4 +1,7 @@
-package quakeViewer;
+package java2Proj45;
+/**
+ * Main Class for the program
+ */
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

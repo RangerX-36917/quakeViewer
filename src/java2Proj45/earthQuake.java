@@ -1,4 +1,9 @@
-package quakeViewer;
+package java2Proj45;
+
+/**
+ * Description: The class for constructing earthquake objects
+ * @author 11612028 CHEN Shijie
+ */
 
 public class earthQuake {
     private int id, areaID, depth;
