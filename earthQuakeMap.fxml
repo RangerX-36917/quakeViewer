@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -23,33 +27,41 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="1168.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quakeViewer.Controller">
+<VBox minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quakeViewer.Controller">
     <opaqueInsets>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </opaqueInsets>
     <children>
-        <HBox prefHeight="70.0" prefWidth="200.0">
+        <HBox>
             <children>
-                <Label text="From:">
+                <Label text="BETWEEN">
                     <opaqueInsets>
                         <Insets top="10.0" />
                     </opaqueInsets>
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>
+                    <font>
+                        <Font size="21.0" />
+                    </font>
                 </Label>
-                <DatePicker fx:id="datePicker1">
+                <DatePicker fx:id="datePicker1" prefHeight="27.0" prefWidth="280.0">
                     <HBox.margin>
                         <Insets left="20.0" />
                     </HBox.margin>
                 </DatePicker>
-                <Label text="To:">
+                <Label prefHeight="27.0" prefWidth="53.0" text="AND">
                     <HBox.margin>
                         <Insets left="120.0" />
                     </HBox.margin>
+                    <font>
+                        <Font size="21.0" />
+                    </font>
                 </Label>
-                <DatePicker fx:id="datePicker2">
+                <DatePicker fx:id="datePicker2" prefHeight="27.0" prefWidth="280.0">
                     <HBox.margin>
                         <Insets left="20.0" />
                     </HBox.margin>
@@ -59,14 +71,17 @@
                 <Insets left="20.0" right="20.0" top="20.0" />
             </VBox.margin>
         </HBox>
-        <HBox prefHeight="70.0" prefWidth="200.0">
+        <HBox alignment="CENTER_LEFT">
             <children>
-                <Label text="Magnitude  &gt;=">
+                <Label alignment="CENTER" prefHeight="48.0" prefWidth="184.0" text="Magnitude  &gt;=">
                     <padding>
                         <Insets left="20.0" top="20.0" />
                     </padding>
+                    <font>
+                        <Font size="23.0" />
+                    </font>
                 </Label>
-                <Slider fx:id="magSlider" cacheShape="false" centerShape="false" majorTickUnit="1.0" max="15.0" minorTickCount="5" nodeOrientation="LEFT_TO_RIGHT" prefWidth="500.0" scaleShape="false" showTickLabels="true" showTickMarks="true" snapToTicks="true">
+                <Slider fx:id="magSlider" cacheShape="false" centerShape="false" majorTickUnit="1.0" max="15.0" minorTickCount="5" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#updateMagVal" onMouseDragged="#updateMagVal" prefHeight="38.0" prefWidth="666.0" scaleShape="false" showTickLabels="true" showTickMarks="true" snapToTicks="true">
                     <HBox.margin>
                         <Insets left="20.0" top="20.0" />
                     </HBox.margin>
@@ -75,42 +90,69 @@
                     </cursor>
 
                 </Slider>
+                <Text fx:id="magBarVal" strokeType="OUTSIDE" strokeWidth="0.0" text="txt">
+                    <font>
+                        <Font size="21.0" />
+                    </font></Text>
             </children>
         </HBox>
-        <HBox prefHeight="70.0" prefWidth="200.0">
+        <HBox fx:id="HBox3" nodeOrientation="LEFT_TO_RIGHT" prefHeight="56.0" prefWidth="977.0">
             <children>
-                <Label text="Region：">
+                <Label alignment="TOP_LEFT" prefHeight="19.0" prefWidth="70.0" text="Region：">
                     <HBox.margin>
                         <Insets left="20.0" top="20.0" />
                     </HBox.margin>
+                    <font>
+                        <Font size="15.0" />
+                    </font>
                 </Label>
-                <ChoiceBox fx:id="regionChoice" prefWidth="300.0">
+                <ChoiceBox fx:id="regionChoice" prefHeight="27.0" prefWidth="324.0">
                     <HBox.margin>
                         <Insets left="20.0" top="10.0" />
                     </HBox.margin>
                 </ChoiceBox>
             </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
         </HBox>
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+        <HBox alignment="CENTER_LEFT" layoutX="400.0">
             <children>
-                <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#search" text="Search" />
+                <AnchorPane layoutX="200.0" prefHeight="26.0" prefWidth="897.0">
+                    <children>
+                        <Button contentDisplay="BOTTOM" layoutX="822.0" mnemonicParsing="false" onMouseClicked="#search" prefHeight="30.0" prefWidth="75.0" text="Search" textAlignment="CENTER">
+                            <font>
+                                <Font size="15.0" />
+                            </font></Button>
+                        <Text fx:id="sysInfo" layoutX="14.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please press &quot;Update Data&quot; before your first search.">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Text>
+                        <Button layoutX="634.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#dataUpdate" text="Update Data">
+                            <font>
+                                <Font size="15.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </AnchorPane>
             </children>
         </HBox>
-        <TabPane prefHeight="800.0" prefWidth="1200.0" tabClosingPolicy="UNAVAILABLE">
+        <TabPane prefHeight="704.0" prefWidth="977.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="Data">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="546.0" prefWidth="666.0">
                             <children>
-                                <TableView fx:id="dataTable" layoutX="5.0" prefHeight="709.0" prefWidth="1191.0">
+                                <TableView fx:id="dataTable" layoutX="5.0" layoutY="1.0" prefHeight="669.0" prefWidth="977.0">
                                     <columns>
                                         <TableColumn fx:id="ColID" prefWidth="75.0" text="ID" />
                                         <TableColumn fx:id="ColDate" prefWidth="190.0" text="UTC_date" />
-                                        <TableColumn fx:id="ColLatitude" prefWidth="145.0" text="Latitude" />
-                                        <TableColumn fx:id="ColLongitude" prefWidth="177.0" text="Longiture" />
-                                        <TableColumn fx:id="ColDepth" prefWidth="124.0" text="Depth" />
-                                        <TableColumn fx:id="ColMag" prefWidth="167.0" text="Magnitude" />
-                                        <TableColumn fx:id="ColRegion" prefWidth="312.0" text="Region" />
+                                        <TableColumn fx:id="ColLatitude" prefWidth="103.0" text="Latitude" />
+                                        <TableColumn fx:id="ColLongitude" prefWidth="86.0" text="Longiture" />
+                                        <TableColumn fx:id="ColDepth" prefWidth="74.0" text="Depth" />
+                                        <TableColumn fx:id="ColMag" prefWidth="104.0" text="Magnitude" />
+                                        <TableColumn fx:id="ColRegion" prefWidth="337.0" text="Region" />
                                     </columns>
                                 </TableView>
                             </children></AnchorPane>
@@ -118,23 +160,11 @@
                 </Tab>
                 <Tab text="Mercator Map">
                     <content>
-                        <AnchorPane fx:id="mercratorMap" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <AnchorPane fx:id="mercratorMap" minHeight="0.0" minWidth="0.0">
                             <children>
-                                <ImageView fitHeight="600.0" fitWidth="900.0" layoutX="150.0" layoutY="71.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="600.0" fitWidth="900.0" layoutX="40.0" layoutY="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@Mercator.jpg" />
-                                    </image>
-                                </ImageView>
-                            </children></AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Eckert IV Map">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <ImageView id="eckertIVMap" fitHeight="502.0" fitWidth="1001.0" layoutX="100.0" layoutY="120.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@Eckert_IV.png" />
                                     </image>
                                 </ImageView>
                             </children></AnchorPane>
@@ -143,21 +173,31 @@
                 <Tab text="Chart by Magnitude">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="1200.0">
-                     <children>
-                        <BarChart id="magnitudeChart" layoutX="77.0" layoutY="20.0" prefHeight="703.0" prefWidth="1046.0" title="Chart by Magnitude">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </BarChart>
-                     </children></AnchorPane>
+                            <children>
+                                <BarChart id="magnitudeChart" fx:id="magnitudeChart" layoutX="77.0" layoutY="20.0" prefHeight="600.0" prefWidth="800.0" title="Chart by Magnitude">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="magXAxis" side="BOTTOM" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="magYAxis" side="LEFT" />
+                                    </yAxis>
+                                </BarChart>
+                            </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Chart by Date">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <BarChart id="dateChart" fx:id="dateChart" layoutX="79.0" layoutY="49.0" prefHeight="548.0" prefWidth="819.0" title="Quake by Date">
+                          <xAxis>
+                            <CategoryAxis fx:id="dateXAxis" side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="dateYAxis" side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
             </tabs>
