@@ -1,4 +1,4 @@
-package java2Proj45;
+package java2_Proj_45;
 /**
  * Controller class for GUI
  * @author 11612028 CHEN Shijie
@@ -116,6 +116,9 @@ public class Controller implements Initializable {
         datePicker2.setValue(LocalDate.now().plusDays(1));
     }
 
+    /**
+     * update database with data from the website
+     */
     @FXML
     public void dataUpdate() {
         int x = ds1.update();
@@ -247,9 +250,6 @@ public class Controller implements Initializable {
      */
     private void showMagChart(ArrayList<earthQuake> data) {
         ObservableList<XYChart.Data<String, Number>> magnitudeAxis = FXCollections.observableArrayList();
-
-//        int size = magnitudeChart.getChildren().size();
-//        magnitudeChart.getChildren().remove(1,size);
         double magnitude;
         int[] magCounter = new int[15];
         for (int i = 0; i < 6; i++) {

@@ -1,4 +1,4 @@
-package java2Proj45;
+package java2_Proj_45;
 /**
  * Description: The class used to load and update data and perform query statements
  * @author 11612028 CHEN Shijie
@@ -17,13 +17,26 @@ import java.util.*;
 import java.util.Date;
 
 public class DataSet {
+    /**
+     * regions get by query
+     */
     private TreeSet<String> regions = new TreeSet<>(); //regions get by query
+    /**
+     * new regions fetched by update
+     */
     private TreeSet<String> newRegions = new TreeSet<>(); //new regions fetched by update
+    /**
+     * new quakes fetched by update
+     */
+    private ArrayList<earthQuake> newQuakes = new ArrayList<>();
+    /**
+     * the number of new quakes updated
+     */
+    private int numNew;
     private Statement statement = null;
     private Connection connection = null;
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private ArrayList<earthQuake> newQuakes = new ArrayList<>();
-    private int numNew;
+
 
     /**
      * constructor

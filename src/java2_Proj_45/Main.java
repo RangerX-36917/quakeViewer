@@ -1,4 +1,4 @@
-package java2Proj45;
+package java2_Proj_45;
 /**
  * Main Class for the program
  */
