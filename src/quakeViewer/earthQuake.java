@@ -5,6 +5,17 @@ public class earthQuake {
     private float latitude, longitude, magnitude;
     private String UTC_date, region;
 
+    /**
+     *
+     * @param id earthquake id
+     * @param date earthquake time
+     * @param latitude earthquake latitude
+     * @param longitude earthquake longitude
+     * @param depth earthquake depth
+     * @param magnitude earthquake magnitude
+     * @param region earthquake region
+     * @param areaID area ID for region
+     */
     public earthQuake(int id, String date, float latitude, float longitude, int depth, float magnitude, String region, int areaID) {
         this.id = id;
         this.UTC_date = date;
@@ -18,10 +29,6 @@ public class earthQuake {
 
     public String toString() {
         return id + " " + UTC_date + " " + latitude + " " + longitude + " " + depth + " " + magnitude + " " + region;
-    }
-
-    public int compareTo(Object o) {
-        return 1;
     }
 
     public int getId() {
