@@ -45,6 +45,7 @@ public class Controller implements Initializable{
     @FXML private AnchorPane mercratorMap;
 
     @FXML private BarChart<String,Number> magnitudeChart;
+    @FXML private BarChart<String,Number> dateChart;
     @FXML private CategoryAxis magXAxis;
     @FXML private NumberAxis magYAxis;
 
@@ -79,7 +80,7 @@ public class Controller implements Initializable{
         magXAxis.setLabel("Magnitude");
         magYAxis.setLabel("Number of Quakes");
         magnitudeChart.getData().add(seriesMag);
-
+        dateChart.getData().add(seriesDate);
         magSlider.setShowTickLabels(true);
 
         regions.add("WORLDWIDE"); //default region
@@ -256,28 +257,26 @@ public class Controller implements Initializable{
         seriesMag.setName("Number");
 
     }
-
-    @FXML
-    private BarChart<String, Number> dateChart;
     @FXML
     private CategoryAxis dateXAxis;
     @FXML
     private NumberAxis dateYAxis;
 
     private XYChart.Series<String,Number> seriesDate = new XYChart.Series<>();
-    private ObservableList<XYChart.Data<String,Number>> dateAxis = FXCollections.observableArrayList();
+
     /**
      * generate chart of number of earthquakes-data
      * @param data data acquired from query
      */
     private void showDateChart(ArrayList<earthQuake> data) {
+        ObservableList<XYChart.Data<String,Number>> dateAxis = FXCollections.observableArrayList();
         ArrayList<String> dateX = new ArrayList<>();
         dateAxis.clear();
         LocalDate fromDay = datePicker1.getValue();
-        LocalDate toDAy=datePicker2.getValue();
         Calendar c1 =  Calendar.getInstance();
         c1.set(fromDay.getYear(), fromDay.getMonthValue() - 1, fromDay.getDayOfMonth());
         Date from = c1.getTime();
+
         LocalDate toDay = datePicker2.getValue();
         Calendar c2 =  Calendar.getInstance();
         c2.set(toDay.getYear(), toDay.getMonthValue() - 1, toDay.getDayOfMonth());
@@ -287,15 +286,17 @@ public class Controller implements Initializable{
         int dayNum=  (int) ((to.getTime() - from.getTime()) / (1000*3600*24));
         SimpleDateFormat df = new SimpleDateFormat(pattern);
         //generate the date between fromDay and toDay
+        Calendar calendar=Calendar.getInstance();
+
         for(int i=0;i<dayNum;i++){
-            Calendar calendar=Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-            Date newDate = calendar.getTime();
+
+            c1.add(Calendar.DAY_OF_YEAR, 1);
+            Date newDate = c1.getTime();
             dateX.add(df.format(newDate));
         }
         System.out.println("dateX: " + dateX.size());
         String date="";
-        int[] dateCounter = new int[dayNum ];
+        int[] dateCounter = new int[dayNum];
         for(int i=0;i<dayNum;i++){
             dateCounter[i]=0;
         }
@@ -323,9 +324,8 @@ public class Controller implements Initializable{
             System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k +"]  " + dateCounter[k]);
             dateAxis.add(new XYChart.Data<>(dateX.get(k),dateCounter[k]));
         }
-        dateChart.getData().clear();
+
         seriesDate.setData(dateAxis);
-        dateChart.getData().add(seriesDate);
 
     }
     @FXML
