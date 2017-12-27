@@ -66,11 +66,6 @@ public class Controller implements Initializable{
     private final Tooltip tooltip2 = new Tooltip();
 
 
-    private XYChart.Series<String,Number> seriesDate = new XYChart.Series<>();
-    private ObservableList<XYChart.Data<String,Number>> dateAxis = FXCollections.observableArrayList();
-
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tooltip1.setText("Fetch latest earthquakes");
@@ -260,8 +255,6 @@ public class Controller implements Initializable{
         seriesMag.setData(magnitudeAxis);
         seriesMag.setName("Number");
 
-
-
     }
 
     @FXML
@@ -270,13 +263,15 @@ public class Controller implements Initializable{
     private CategoryAxis dateXAxis;
     @FXML
     private NumberAxis dateYAxis;
-    private final ArrayList<String> dateX = new ArrayList<>();
 
+    private XYChart.Series<String,Number> seriesDate = new XYChart.Series<>();
+    private ObservableList<XYChart.Data<String,Number>> dateAxis = FXCollections.observableArrayList();
     /**
      * generate chart of number of earthquakes-data
      * @param data data acquired from query
      */
     private void showDateChart(ArrayList<earthQuake> data) {
+        ArrayList<String> dateX = new ArrayList<>();
         dateAxis.clear();
         LocalDate fromDay = datePicker1.getValue();
         LocalDate toDAy=datePicker2.getValue();
@@ -289,45 +284,49 @@ public class Controller implements Initializable{
         Date to = c2.getTime();
 
         //calculate days between fromDay and toDay
-        int dayNum=  (int) ((from.getTime() - to.getTime()) / (1000*3600*24));
+        int dayNum=  (int) ((to.getTime() - from.getTime()) / (1000*3600*24));
         SimpleDateFormat df = new SimpleDateFormat(pattern);
         //generate the date between fromDay and toDay
         for(int i=0;i<dayNum;i++){
             Calendar calendar=Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             Date newDate = calendar.getTime();
-            dateX.add(newDate.toString());
+            dateX.add(df.format(newDate));
         }
-
+        System.out.println("dateX: " + dateX.size());
         String date="";
-        int[] dateCounter = new int[dayNum];
+        int[] dateCounter = new int[dayNum ];
         for(int i=0;i<dayNum;i++){
             dateCounter[i]=0;
         }
         int i=0;
 
         for(earthQuake e:data) {
-            date=e.getUTC_date();
+            date=e.getUTC_date().substring(0,10);
 
             Date date1 = null;
             try {
-                date1 = df.parse(date.substring(1,10));
+                //System.out.println(date);
+                date1 = df.parse(date);
             } catch (ParseException e1) {
                 e1.printStackTrace();
             }
-            for(int j=0;j<dayNum;j++){
+            //for(int j=0;j<dayNum;j++){
                 int n=(int)((date1.getTime()-from.getTime())/86400000);
+               // System.out.println("n: " + n);
                 //find the difference between date encountered and fromDate
                 dateCounter[n]++;
-            }
+            //}
 
         }
         for(int k=0;k<dayNum;k++){
+            System.out.println("dateX[" + k + "]: " + dateX.get(k) + "  dateCounter[" + k +"]  " + dateCounter[k]);
             dateAxis.add(new XYChart.Data<>(dateX.get(k),dateCounter[k]));
         }
         dateChart.getData().clear();
-        seriesMag.setData(dateAxis);
+        seriesDate.setData(dateAxis);
         dateChart.getData().add(seriesDate);
+
     }
     @FXML
     private void reset() {
