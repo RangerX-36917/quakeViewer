@@ -1,4 +1,7 @@
 # java2_Proj_45
+A program to show earthquakes around the world.
+
+
 ## team member:
 
 陈士杰 CHEN Shijie   11612028 backend (data management)
