@@ -1,3 +1,3 @@
-# java2_Proj_45
+# java2_Proj
 A program to show earthquakes around the world.
 
